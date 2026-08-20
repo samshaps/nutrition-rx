@@ -8,6 +8,7 @@
 1. **"Improve A1c" is a fourth mutually-exclusive goal**, exactly as the PRD's goal table has it (lose fat / gain muscle / maintain / improve A1c). No modifier layering in v1.
 2. **24-hour recall is in**, as two optional fields (current calories, current protein). Its only job is the current-vs-target gap display on the plan document.
 3. **Demo data is seeded**: three clearly-labeled fictional patients, deletable, plus a "load example" affordance on the intake form.
+4. **Tape-measure body-composition estimate** (added 2026-08-20): many patients haven't had an InBody scan (insurance), so the intake form offers an explicit estimate path — see "Body-composition source" below. Without it, missing body comp silently disables the EA check, which is the product's whole point.
 
 ## Stack
 
@@ -51,8 +52,10 @@ interface Patient {
   firstName: string; lastName: string; dob: string; // ISO date
   sex: 'male' | 'female';
   heightCm: number; weightKg: number;
+  bodyCompSource?: 'scan' | 'tape_estimate';  // absent = not available
   bodyFatPct?: number;        // OR ffmKg — store one, derive the other
   ffmKg?: number;
+  waistCm?: number; neckCm?: number; hipCm?: number;  // tape_estimate inputs (hip: female only)
   measuredRmrKcal?: number;   // indirect calorimetry override
   activityLevel: ActivityLevel;
   exercise: { type: string; sessionsPerWeek: number; minutesPerSession: number }[];
@@ -69,6 +72,14 @@ UI accepts imperial (lb, ft/in) and metric; storage is metric.
 ### Engine rules (from PRD — the non-negotiables)
 
 - **RMR tiers**, in order: measured RMR → Katch-McArdle `370 + 21.6 × FFM(kg)` → Mifflin-St Jeor `10W + 6.25H − 5A + (5 | −161)`. The result carries `rmrSource: 'measured' | 'ffm' | 'population'` and the plan displays it as a trust badge.
+- **Body-composition source** (`src/engine/bodyComp.ts`): three states, chosen explicitly on the intake form.
+  - `scan` — body fat % / FFM from InBody or DEXA. Full behavior as elsewhere in this plan: Katch-McArdle RMR, full EA check.
+  - `tape_estimate` — US Navy circumference method from waist + neck (+ hip for women) + height, all in-office tape measurements:
+    - male: `BF% = 495 / (1.0324 − 0.19077·log10(waist − neck) + 0.15456·log10(height)) − 450` (cm)
+    - female: `BF% = 495 / (1.29579 − 0.35004·log10(waist + hip − neck) + 0.22100·log10(height)) − 450` (cm)
+    - Estimated FFM **unlocks the EA check in "estimated" mode** but does **not** upgrade the RMR tier — RMR stays Mifflin-St Jeor (stacking an estimate on an estimate adds false precision; Katch-McArdle is reserved for measured FFM). `EngineResult` carries `ffmSource: 'measured' | 'estimated' | null` and the plan labels the EA meter "estimated from tape measurements" with a ±3–4 point body-fat caveat.
+    - The EA **floor is applied against the conservative end of the estimate**: compute the floor with FFM at BF% − 4 pts (higher FFM → higher kcal floor), so estimation error can never push a patient below the true floor. Display EA as a range, not a single decimal.
+  - absent — Mifflin path, EA check degrades to the warning banner (unchanged).
 - **TDEE** = RMR × activity factor (1.2–1.9), with exercise energy expenditure (EEE) computed separately from structured exercise (MET-based estimate per session type) so EA can use it.
 - **Goal targets** per the PRD table (lose −15..−25% TDEE; gain +10..+20%; maintain; A1c −10..−20% if BMI ≥ 25 else maintain). Pick the midpoint as the prescribed number; show the range.
 - **Floors — clamp, never silently:**
@@ -88,12 +99,14 @@ UI accepts imperial (lb, ft/in) and metric; storage is metric.
 5. Renal flag caps protein and emits the flag.
 6. Missing FFM → EA degrades to warning, Mifflin path used.
 7. A1c goal with BMI < 25 → maintain calories, A1c exercise template.
+8. Navy circumference formula against published worked examples, male and female.
+9. `tape_estimate` source → EA check runs labeled "estimated", RMR stays Mifflin, floor computed at BF% − 4 pts.
 
 ## Pages
 
 **Roster (`/`).** Patient cards (name, age, goal, last updated), New Patient button, delete with confirm. Seeded examples badged "Example". Small footer disclaimer + "all data stays in this browser" note.
 
-**Intake (`/patient/:id/edit`).** One page, grouped sections mirroring the PRD's input list: Identity → Anthropometrics → Body composition (optional, unlocks EA) → Measured RMR (optional) → Activity + structured exercise (repeatable rows) → 24-hr recall (optional) → Goal (single select, fat-loss default) → Clinical flags (checkboxes). Inline validation; "Generate plan" saves and routes to the plan.
+**Intake (`/patient/:id/edit`).** One page, grouped sections mirroring the PRD's input list: Identity → Anthropometrics → Body composition (optional, unlocks EA; a three-way source control — "InBody / DEXA scan" / "Estimate from tape measures" / "Not available" — where the tape option swaps in waist/neck/hip fields and shows the derived body-fat estimate live) → Measured RMR (optional) → Activity + structured exercise (repeatable rows) → 24-hr recall (optional) → Goal (single select, fat-loss default) → Clinical flags (checkboxes). Inline validation; "Generate plan" saves and routes to the plan.
 
 **Plan (`/patient/:id/plan`).** The artifact. Three sections on two printed pages:
 1. **Nutrition targets** — calories; protein first and largest; carbs/fat/fiber; RMR-source trust badge; EA value with band; clamp explanation box when applicable; current-vs-target gap bars when recall present.
@@ -107,6 +120,7 @@ Print button → browser print-to-PDF; print CSS hides app chrome, fits two page
 1. **Fat loss + InBody data** — exercises the Katch-McArdle path, EA check visible and in the "reduced" band.
 2. **The clamp case** — fat-loss goal whose −25% target lands below the EA floor → plan shows the clamped number and the why-box.
 3. **Muscle gain, no body comp** — Mifflin path, EA warning state, gain exercise template.
+4. **Fat loss, tape-estimate body comp** — no scan on file; waist/neck/hip entered, Navy-estimated body fat, EA check running in "estimated" mode with the range display. Demonstrates the no-InBody path end to end.
 
 ## Execution plan (for the agent fan-out)
 

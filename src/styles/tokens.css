@@ -1,0 +1,44 @@
+/*
+ * Nutrition Rx design tokens.
+ * Ported verbatim from the approved mocks (mocks/nutrition-rx-mocks.html :root block).
+ * Do not edit values without re-approving against the mocks.
+ */
+
+:root {
+  --paper: #FAFBF9;
+  --surface: #FFFFFF;
+  --ink: #1C2B33;
+  --muted: #5C6E74;
+  --line: #D9E0DE;
+  --accent: #0F6B5C;
+  --accent-soft: #E4EFEB;
+  --warn: #B45309;
+  --warn-soft: #FBF0E0;
+  --danger: #A33A2E;
+  --good: #0F6B5C;
+  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}

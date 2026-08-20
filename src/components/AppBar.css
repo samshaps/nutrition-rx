@@ -1,0 +1,89 @@
+.nrx-topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.nrx-topbar-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nrx-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.nrx-wordmark:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.nrx-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--accent);
+}
+
+.nrx-mark svg {
+  display: block;
+}
+
+.nrx-storage-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.nrx-storage-note svg {
+  display: block;
+  flex: none;
+}
+
+.nrx-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+@media (max-width: 700px) {
+  .nrx-topbar-inner {
+    padding: 12px 16px;
+    row-gap: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .nrx-storage-note {
+    white-space: normal;
+  }
+}
+
+@media print {
+  .nrx-topbar {
+    display: none;
+  }
+}

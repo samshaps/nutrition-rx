@@ -72,7 +72,8 @@ UI accepts imperial (lb, ft/in) and metric; storage is metric.
 - **RMR tiers**, in order: measured RMR → Katch-McArdle `370 + 21.6 × FFM(kg)` → Mifflin-St Jeor `10W + 6.25H − 5A + (5 | −161)`. The result carries `rmrSource: 'measured' | 'ffm' | 'population'` and the plan displays it as a trust badge.
 - **Body composition is scan-derived or absent** (decision 4). Present → Katch-McArdle RMR + full EA check. Absent → Mifflin path, EA check degrades to the warning banner. No estimation paths in v1.
 - **TDEE** = RMR × activity factor (1.2–1.9), with exercise energy expenditure (EEE) computed separately from structured exercise (MET-based estimate per session type) so EA can use it.
-- **Goal targets** per the PRD table (lose −15..−25% TDEE; gain +10..+20%; maintain; A1c −10..−20% if BMI ≥ 25 else maintain). Pick the midpoint as the prescribed number; show the range.
+- **TDEE composition** (settled 2026-08-20): `TDEE = RMR × activity factor + EEE`. The activity factor covers occupational/daily (non-exercise) activity only; structured exercise is computed separately as EEE (gross MET × kg × hours per session, summed weekly ÷ 7; document the MET table in `tdee.ts`) and added on top. EA uses that same EEE.
+- **Goal targets** per the PRD table (lose −15..−25% TDEE; gain +10..+20%; maintain; A1c −10..−20% if BMI ≥ 25 else maintain). Always show the range. Prescribed number: **lose_fat uses the aggressive end (−25%)** — the floors are the safety mechanism and clamp it back when it cuts too deep, which is the product's core story (a midpoint deficit almost never trips the EA floor, an aggressive one reliably does for the at-risk profile); flag this default for Randee to validate. Gain uses +15%, A1c uses −15% when BMI ≥ 25. Round final kcal targets to the nearest 10, macros to whole grams.
 - **Floors — clamp, never silently:**
   - target ≥ RMR
   - EA = (target − EEE) / FFM ≥ 30 kcal/kg FFM (only when FFM known; warning banner when unknown)

@@ -127,16 +127,14 @@ const GOAL_RANGE_NAME: Record<Goal, string> = {
 /** Machine-readable macro flags → plain language for the printed sheet. */
 const MACRO_FLAG_LABELS: Record<string, string> = {
   renal_protein_cap: `Protein capped at 0.8 g/kg ${MIDDOT} renal disease on file`,
-  renal_cap: `Protein capped at 0.8 g/kg ${MIDDOT} renal disease on file`,
-  protein_capped_renal: `Protein capped at 0.8 g/kg ${MIDDOT} renal disease on file`,
   adjusted_body_weight: 'Protein set from adjusted body weight (BMI 30 or above)',
-  adjusted_bw: 'Protein set from adjusted body weight (BMI 30 or above)',
-  fat_floor_applied: 'Fat held at its floor — 0.6 g/kg and 20% of calories',
-  fat_minimum: 'Fat held at its floor — 0.6 g/kg and 20% of calories',
-  carbs_floor_applied: 'Carbohydrate is the remainder after protein and fat',
-  pregnancy_lactation: 'Pregnancy / lactation flagged — confirm targets with the care team',
-  glp1: 'GLP-1 on board — protein and fiber matter more when appetite is suppressed',
+  kcal_too_low_for_macros:
+    'Calorie target is too low to hold every macro floor — review before use',
+  protein_dosed_by_training_volume: 'Protein dosed to weekly training volume',
 };
+
+/** Flags the provider must act on print in amber; the rest are informational. */
+const CAUTION_FLAGS = new Set(['renal_protein_cap', 'kcal_too_low_for_macros']);
 
 function macroFlagLabel(flag: string): string {
   const known = MACRO_FLAG_LABELS[flag];
@@ -313,6 +311,17 @@ export function PlanView({ patient, plan }: PlanViewProps) {
 
           <ExerciseSection plan={plan} />
           <AtAGlance plan={plan} />
+
+          {/* ---------------- beyond the numbers ---------------- */}
+          <section className="beyond">
+            <div className="beyond-k">Beyond the numbers</div>
+            <p>
+              These targets describe energy and food, which is only part of the picture. Stress,
+              mental health, medical history, medications, and how well you sleep all affect
+              metabolism and body composition, sometimes more than a calorie figure does. Your
+              provider weighs those alongside this plan — bring up anything that has changed.
+            </p>
+          </section>
 
           {/* ---------------- footer ---------------- */}
           <div className="colophon">
@@ -536,7 +545,10 @@ function NutritionSection({
       {flags.length > 0 ? (
         <div className="macro-flags">
           {flags.map((f) => (
-            <span className="flagchip" key={f}>
+            <span
+              className={CAUTION_FLAGS.has(f) ? 'flagchip flagchip--warn' : 'flagchip'}
+              key={f}
+            >
               {macroFlagLabel(f)}
             </span>
           ))}
@@ -1138,8 +1150,10 @@ function dayKind(activity: string): string {
 /** Split "Brisk walk 30 min" into a label and a mono duration sub-line. */
 function splitActivity(activity: string): { main: string; detail: string | null } {
   const text = (activity ?? '').trim();
-  const m = text.match(/^(.*?)[\s,·–-]*(\d+\s*(?:min|minutes)\b.*)$/i);
-  if (m && m[1].trim()) return { main: m[1].trim(), detail: m[2].trim() };
+  const m = text.match(/^(.*?)[\s,+·–-]*(\d+\s*(?:min|minutes)\b.*)$/i);
+  if (m && m[1].trim()) {
+    return { main: m[1].trim().replace(/[\s,+·–-]+$/, ''), detail: m[2].trim() };
+  }
   return { main: text, detail: null };
 }
 

@@ -690,8 +690,13 @@
   line-height: 1.35;
   border-radius: 3px;
   padding: 4px 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.plan-doc .flagchip--warn {
   background: var(--warn-soft);
-  border: 1px solid #f0dfc2;
+  border-color: #f0dfc2;
   color: var(--warn);
 }
 

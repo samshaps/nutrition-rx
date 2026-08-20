@@ -41,13 +41,15 @@ describe('app shell', () => {
   });
 
   it('routes /patient/:id/edit to intake', () => {
+    ensureSeeds();
     renderAt('/patient/seed-maya-torres-0001/edit');
-    expect(screen.getByRole('heading', { name: 'Patient intake' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Intake' })).toBeInTheDocument();
   });
 
   it('routes /patient/:id/plan to the plan document', () => {
+    ensureSeeds();
     renderAt('/patient/seed-maya-torres-0001/plan');
-    expect(screen.getByRole('heading', { name: 'Plan document' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Maya Torres' })).toBeInTheDocument();
   });
 
   it('redirects unknown routes to the roster', () => {
@@ -136,8 +138,8 @@ describe('seed data', () => {
   });
 });
 
-describe('engine stub', () => {
-  it('throws until WS-A lands the real implementation', () => {
+describe('engine end-to-end (canonical clamp case)', () => {
+  it('clamps Maya to the energy-availability floor with the expected numbers', () => {
     const input: EngineInput = {
       sex: 'female',
       ageYears: 34,
@@ -150,6 +152,13 @@ describe('engine stub', () => {
       goal: 'lose_fat',
       clinicalFlags: [],
     };
-    expect(() => generatePlan(input)).toThrow('not implemented');
+    const plan = generatePlan(input);
+    expect(plan.rmr).toMatchObject({ kcal: 1469, source: 'ffm' });
+    expect(plan.target.kcal).toBe(1750);
+    expect(plan.target.clamped).toMatchObject({ clampedBy: 'ea_floor' });
+    expect(plan.ea?.band).toBe('reduced');
+    expect(plan.ea?.value).toBeGreaterThanOrEqual(30);
+    expect(plan.macros.proteinG).toBe(150);
+    expect(plan.macros.proteinPerKg).toBe(2);
   });
 });

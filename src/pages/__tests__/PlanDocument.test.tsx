@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import PlanDocument, { PlanView, toEngineInput } from '../PlanDocument';
-import { PLAN_FIXTURE, buildPortionTiles } from '../planFixture';
+import { PLAN_FIXTURE, buildPortionTiles } from './planFixture';
 import { buildFoodGuidance, generatePlan } from '../../engine';
 import { clearAll, ensureSeeds } from '../../store/patients';
 import { SEED_PATIENTS } from '../../store/seeds';

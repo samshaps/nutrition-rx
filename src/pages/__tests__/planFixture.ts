@@ -16,7 +16,7 @@
  * PlanDocument.tsx, and this whole module goes away with them.
  */
 
-import type { PlanResult } from '../engine/types';
+import type { PlanResult } from '../../engine/types';
 
 /* ------------------------------------------------------------------ *
  * 1. Fixture PlanResult — Maya Torres (seed-maya-torres-0001)

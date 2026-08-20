@@ -14,7 +14,8 @@ import type {
   RampWeek,
   SplitDay,
 } from '../engine/types';
-import { PLAN_FIXTURE, buildPortionTiles, type PortionTile } from './planFixture';
+/** Icon keys for the food-tile glyphs drawn inline below. */
+type GlyphIcon = 'chicken' | 'yogurt' | 'eggs' | 'whey' | 'salmon';
 import './PlanDocument.css';
 
 /**
@@ -182,41 +183,8 @@ export function toEngineInput(patient: Patient): EngineInput {
   };
 }
 
-/** Structural check — the engine is landing concurrently, so trust nothing. */
-function isPlanResult(v: unknown): v is PlanResult {
-  if (!v || typeof v !== 'object') return false;
-  const p = v as PlanResult;
-  if (!p.rmr || !isNum(p.rmr.kcal)) return false;
-  if (!isNum(p.eee) || !isNum(p.tdee)) return false;
-  if (!p.target || !isNum(p.target.kcal)) return false;
-  if (!Array.isArray(p.target.range) || p.target.range.length !== 2) return false;
-  if (!p.target.range.every(isNum)) return false;
-  if (p.target.clamped) {
-    const c = p.target.clamped;
-    if (!isNum(c.originalTarget) || !isNum(c.floorValue) || !c.clampedBy) return false;
-  }
-  const m = p.macros;
-  if (!m || !isNum(m.proteinG) || !isNum(m.carbsG) || !isNum(m.fatG) || !isNum(m.fiberG)) {
-    return false;
-  }
-  if (p.ea && !isNum(p.ea.value)) return false;
-  const ex = p.exercise;
-  if (!ex || !isNum(ex.resistanceDaysPerWeek) || !isNum(ex.cardioMinutesPerWeek)) return false;
-  if (!Array.isArray(ex.rampWeeks) || !Array.isArray(ex.split) || !Array.isArray(ex.notes)) {
-    return false;
-  }
-  return true;
-}
-
 function resolvePlan(patient: Patient): PlanResult {
-  try {
-    const result = generatePlan(toEngineInput(patient));
-    if (isPlanResult(result)) return result;
-  } catch {
-    // Engine not ready yet (throws 'not implemented' until WS-A lands).
-  }
-  // INTEGRATION: remove fallback — once the engine is live, let it throw.
-  return PLAN_FIXTURE;
+  return generatePlan(toEngineInput(patient));
 }
 
 /* ------------------------------------------------------------------ *
@@ -940,7 +908,7 @@ function AtAGlance({ plan }: { plan: PlanResult }) {
  * Section 2 — food guidance
  * ------------------------------------------------------------------ */
 
-const GLYPHS: Record<PortionTile['icon'], ReactNode> = {
+const GLYPHS: Record<GlyphIcon, ReactNode> = {
   chicken: (
     <>
       <path d="M11 24c0-8 6-14 14-14 6 0 10 4 10 9 0 3-2 5-2 8 0 5-5 9-11 9s-11-4-11-12z" />
@@ -982,12 +950,12 @@ interface RenderTile {
   portion: string;
   proteinG: number;
   running: number;
-  icon: PortionTile['icon'] | null;
+  icon: GlyphIcon | null;
   emoji: string | null;
 }
 
 /** Engine food labels that have a drawn glyph in the mock's icon set. */
-const ICON_BY_LABEL: Record<string, PortionTile['icon']> = {
+const ICON_BY_LABEL: Record<string, GlyphIcon> = {
   'Chicken breast': 'chicken',
   Salmon: 'salmon',
   'Whey protein': 'whey',
@@ -1000,51 +968,28 @@ function resolveFoodTiles(proteinG: number): {
   covered: number;
   guides: { carb: string; fat: string; fiber: string } | null;
 } {
-  try {
-    const guidance: FoodGuidance = buildFoodGuidance(proteinG);
-    if (guidance && Array.isArray(guidance.items) && guidance.items.length > 0) {
-      let running = 0;
-      const tiles = guidance.items.map((item, i) => {
-        running += item.proteinG;
-        return {
-          key: `${item.label}-${i}`,
-          name: item.label,
-          portion: item.portion,
-          proteinG: Math.round(item.proteinG),
-          running: Math.round(running),
-          icon: ICON_BY_LABEL[item.label] ?? null,
-          emoji: item.emoji ?? null,
-        };
-      });
-      return {
-        tiles,
-        covered: Math.round(guidance.totalProteinG ?? running),
-        guides: {
-          carb: guidance.carbGuidance,
-          fat: guidance.fatGuidance,
-          fiber: guidance.fiberGuidance,
-        },
-      };
-    }
-  } catch {
-    // Engine food guidance unavailable — fall through to the local library.
-  }
-
-  // INTEGRATION: remove fallback — the engine's buildFoodGuidance() is the
-  // source of truth; this local library only covers it throwing.
-  const tiles = buildPortionTiles(proteinG);
+  const guidance: FoodGuidance = buildFoodGuidance(proteinG);
+  let running = 0;
+  const tiles = guidance.items.map((item, i) => {
+    running += item.proteinG;
+    return {
+      key: `${item.label}-${i}`,
+      name: item.label,
+      portion: item.portion,
+      proteinG: Math.round(item.proteinG),
+      running: Math.round(running),
+      icon: ICON_BY_LABEL[item.label] ?? null,
+      emoji: item.emoji ?? null,
+    };
+  });
   return {
-    tiles: tiles.map((t) => ({
-      key: t.icon,
-      name: t.name,
-      portion: t.portion,
-      proteinG: t.proteinG,
-      running: t.running,
-      icon: t.icon,
-      emoji: null,
-    })),
-    covered: tiles.length ? tiles[tiles.length - 1].running : 0,
-    guides: null,
+    tiles,
+    covered: Math.round(guidance.totalProteinG ?? running),
+    guides: {
+      carb: guidance.carbGuidance,
+      fat: guidance.fatGuidance,
+      fiber: guidance.fiberGuidance,
+    },
   };
 }
 

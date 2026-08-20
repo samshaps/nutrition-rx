@@ -604,6 +604,21 @@
   max-width: 62ch;
 }
 
+/* provenance footnote for the 30 kcal/kg floor */
+.plan-doc .floor-source {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dotted var(--line);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 74ch;
+}
+.plan-doc .floor-source b {
+  color: var(--ink);
+  font-weight: 700;
+}
+
 /* ---------------- macros ---------------- */
 .plan-doc .macros {
   margin-top: 12px;
@@ -786,6 +801,11 @@
   display: block;
   width: 30px;
   height: 30px;
+}
+/* Foods outside the drawn icon set fall back to the engine's portion emoji. */
+.plan-doc .glyph-emoji {
+  font-size: 24px;
+  line-height: 1;
 }
 .plan-doc .portion-n {
   font-size: 12.5px;
@@ -1055,6 +1075,68 @@
   margin-top: 5px;
 }
 
+/* ---------------- at a glance ---------------- */
+.plan-doc .glance {
+  margin-top: 30px;
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 16px 18px 18px;
+  background: var(--paper);
+}
+.plan-doc .glance-head {
+  font-family: var(--font-display), 'Archivo', system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.plan-doc .glance-row {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.plan-doc .gl {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 13px 14px 14px;
+}
+.plan-doc .gl-k {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-height: 24px;
+}
+.plan-doc .gl-v {
+  margin-top: 4px;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 30px;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--accent);
+}
+.plan-doc .gl-v span {
+  font-size: 13px;
+  color: var(--muted);
+  margin-left: 3px;
+  letter-spacing: 0;
+}
+.plan-doc .gl-v--text {
+  font-size: 21px;
+  color: var(--ink);
+}
+.plan-doc .gl-t {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
 /* ---------------- footer ---------------- */
 .plan-doc .colophon {
   margin-top: 34px;
@@ -1158,6 +1240,9 @@
   .plan-doc .meter-legend {
     font-size: 10px;
   }
+  .plan-doc .glance-row {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 @media (max-width: 430px) {
   .plan-doc .ground {
@@ -1211,6 +1296,9 @@
   }
   .plan-doc .wk-v {
     font-size: 14px;
+  }
+  .plan-doc .glance-row {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1362,6 +1450,9 @@
     width: 21px;
     height: 21px;
   }
+  .plan-doc .glyph-emoji {
+    font-size: 17px;
+  }
   .plan-doc .portion-g {
     font-size: 13px;
     margin-top: 6px;
@@ -1396,9 +1487,39 @@
   .plan-doc .day {
     min-height: 66px;
   }
+  .plan-doc .floor-source {
+    font-size: 9px;
+    margin-top: 8px;
+    padding-top: 7px;
+  }
+  /* "At a glance" stays with section 3 on page 2 — keep it compact. */
+  .plan-doc .glance {
+    margin-top: 16px;
+    padding: 10px 12px 12px;
+  }
+  .plan-doc .glance-row {
+    margin-top: 8px;
+    gap: 7px;
+  }
+  .plan-doc .gl {
+    padding: 8px 10px 9px;
+  }
+  .plan-doc .gl-k {
+    min-height: 20px;
+  }
+  .plan-doc .gl-v {
+    font-size: 22px;
+  }
+  .plan-doc .gl-v--text {
+    font-size: 15px;
+  }
+  .plan-doc .gl-t {
+    font-size: 9.5px;
+    margin-top: 4px;
+  }
   .plan-doc .colophon {
-    margin-top: 18px;
-    padding-top: 10px;
+    margin-top: 14px;
+    padding-top: 9px;
   }
 
   /* The dashed on-screen divider is replaced by a real page break. */
@@ -1422,6 +1543,7 @@
   .plan-doc .rx,
   .plan-doc .ramp,
   .plan-doc .split,
+  .plan-doc .glance,
   .plan-doc .colophon {
     break-inside: avoid;
     page-break-inside: avoid;

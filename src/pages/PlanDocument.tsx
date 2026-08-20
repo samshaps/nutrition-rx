@@ -2,9 +2,11 @@ import type { ReactNode } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import AppBar from '../components/AppBar';
 import { getPatient } from '../store/patients';
-import { generatePlan } from '../engine';
+import { buildFoodGuidance, generatePlan } from '../engine';
+import type { FoodGuidance } from '../engine';
 import type {
   ActivityLevel,
+  EaBand,
   EngineInput,
   Goal,
   Patient,
@@ -90,9 +92,10 @@ function pctOfKcal(grams: number, kcalPerGram: number, totalKcal: number): numbe
   return Math.round(((grams * kcalPerGram) / totalKcal) * 100);
 }
 
+/** Percentage for an inline width/height/offset, clamped and rounded for CSS. */
 function clampPct(n: number, min = 2, max = 100): number {
   if (!isNum(n)) return min;
-  return Math.min(max, Math.max(min, n));
+  return Math.round(Math.min(max, Math.max(min, n)) * 100) / 100;
 }
 
 /* ------------------------------------------------------------------ *
@@ -309,6 +312,7 @@ export function PlanView({ patient, plan }: PlanViewProps) {
           </div>
 
           <ExerciseSection plan={plan} />
+          <AtAGlance plan={plan} />
 
           {/* ---------------- footer ---------------- */}
           <div className="colophon">
@@ -472,6 +476,13 @@ function NutritionSection({
 
       {plan.ea ? <EaMeter value={plan.ea.value} band={plan.ea.band} /> : <EaUnavailable />}
 
+      {/* Where the 30 kcal/kg floor comes from — asked for by name at review. */}
+      <p className="floor-source">
+        <b>Safety floor:</b> 30 kcal per kg of fat-free mass, drawn from low-energy-availability
+        (RED-S) research. The evidence base is strongest in athletes; it is used here as a
+        conservative default, not a diagnosis — final thresholds are your provider&rsquo;s call.
+      </p>
+
       {/* macros */}
       <div className="sub">Daily macronutrient targets</div>
       <div className="macros">
@@ -482,8 +493,10 @@ function NutritionSection({
             <span>g</span>
           </div>
           <div className="macro-sub">
-            {isNum(macros.proteinPerKg) ? `${fmt1(macros.proteinPerKg)} g per kg body weight — ` : ''}
-            {proteinTail(patient.goal)}
+            {isNum(macros.proteinPerKg)
+              ? `${fmt1(macros.proteinPerKg)} g per kg body weight — dosed to your training volume. `
+              : 'Dosed to your training volume. '}
+            The accepted range is 0.8&ndash;2.2 g/kg.
           </div>
         </div>
         <div className="macro">
@@ -533,19 +546,6 @@ function NutritionSection({
       {hasRecall ? <Gaps recall={recall!} plan={plan} /> : null}
     </div>
   );
-}
-
-function proteinTail(goal: Goal): string {
-  switch (goal) {
-    case 'lose_fat':
-      return 'the number that protects muscle while you lose fat.';
-    case 'gain_muscle':
-      return 'the number that gives new muscle something to be built from.';
-    case 'improve_a1c':
-      return 'protein at every meal steadies the glucose response to the rest of the plate.';
-    default:
-      return 'the number that protects lean mass as your weight holds steady.';
-  }
 }
 
 function TargetSide({ goal, plan }: { goal: Goal; plan: PlanResult }) {
@@ -690,7 +690,7 @@ function Term({
 /** Meter scale: 0–60 kcal/kg, so 30 sits at 50% and 45 at 75% (mock geometry). */
 const EA_SCALE_MAX = 60;
 
-function EaMeter({ value, band }: { value: number; band: PlanResult['ea'] extends null ? never : 'low' | 'reduced' | 'optimal' }) {
+function EaMeter({ value, band }: { value: number; band: EaBand }) {
   const left = clampPct((value / EA_SCALE_MAX) * 100, 3, 97);
   const atFloor = Math.abs(value - 30) < 0.5;
 
@@ -838,6 +838,80 @@ function Gaps({ recall, plan }: { recall: NonNullable<Patient['recall']>; plan: 
 }
 
 /* ------------------------------------------------------------------ *
+ * Closing summary — "At a glance"
+ * ------------------------------------------------------------------ *
+ * Four patient-readable tiles at the end of the document. Same numbers as
+ * above, nothing new: the whole plan reduced to what to remember.
+ */
+
+const BAND_WORD: Record<EaBand, string> = {
+  low: 'Low',
+  reduced: 'Reduced',
+  optimal: 'Optimal',
+};
+
+function AtAGlance({ plan }: { plan: PlanResult }) {
+  const rx = plan.exercise;
+  const ramp = Array.isArray(rx.rampWeeks)
+    ? rx.rampWeeks.filter((w) => w && isNum(w.cardioMinutes))
+    : [];
+  const first = ramp.length ? ramp[0].cardioMinutes : rx.cardioMinutesPerWeek;
+  const last = ramp.length ? ramp[ramp.length - 1].cardioMinutes : rx.cardioMinutesPerWeek;
+  const cardioPhrase =
+    first !== last
+      ? `build to ${fmt(last)} min cardio/wk`
+      : `${fmt(rx.cardioMinutesPerWeek)} min cardio/wk`;
+
+  return (
+    <section className="glance" aria-label="At a glance">
+      <div className="glance-head">At a glance</div>
+      <div className="glance-row">
+        <div className="gl">
+          <div className="gl-k">Energy availability</div>
+          {plan.ea ? (
+            <>
+              <div className="gl-v">
+                {fmt1(plan.ea.value)}
+                <span>kcal/kg</span>
+              </div>
+              <div className="gl-t">{BAND_WORD[plan.ea.band] ?? plan.ea.band} band</div>
+            </>
+          ) : (
+            <>
+              <div className="gl-v gl-v--text">Not assessed</div>
+              <div className="gl-t">No body-composition data</div>
+            </>
+          )}
+        </div>
+        <div className="gl">
+          <div className="gl-k">Calories</div>
+          <div className="gl-v">
+            {fmt(plan.target.kcal)}
+            <span>kcal</span>
+          </div>
+          <div className="gl-t">per day</div>
+        </div>
+        <div className="gl">
+          <div className="gl-k">Protein</div>
+          <div className="gl-v">
+            {fmt(plan.macros.proteinG)}
+            <span>g</span>
+          </div>
+          <div className="gl-t">per day</div>
+        </div>
+        <div className="gl">
+          <div className="gl-k">Exercise</div>
+          <div className="gl-v gl-v--text">
+            {fmt(rx.resistanceDaysPerWeek)}&times; lifting
+          </div>
+          <div className="gl-t">{cardioPhrase}</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ *
  * Section 2 — food guidance
  * ------------------------------------------------------------------ */
 
@@ -876,12 +950,82 @@ const GLYPHS: Record<PortionTile['icon'], ReactNode> = {
   ),
 };
 
+/** A portion tile ready to render, from either the engine or the local library. */
+interface RenderTile {
+  key: string;
+  name: string;
+  portion: string;
+  proteinG: number;
+  running: number;
+  icon: PortionTile['icon'] | null;
+  emoji: string | null;
+}
+
+/** Engine food labels that have a drawn glyph in the mock's icon set. */
+const ICON_BY_LABEL: Record<string, PortionTile['icon']> = {
+  'Chicken breast': 'chicken',
+  Salmon: 'salmon',
+  'Whey protein': 'whey',
+  'Greek yogurt': 'yogurt',
+  Eggs: 'eggs',
+};
+
+function resolveFoodTiles(proteinG: number): {
+  tiles: RenderTile[];
+  covered: number;
+  guides: { carb: string; fat: string; fiber: string } | null;
+} {
+  try {
+    const guidance: FoodGuidance = buildFoodGuidance(proteinG);
+    if (guidance && Array.isArray(guidance.items) && guidance.items.length > 0) {
+      let running = 0;
+      const tiles = guidance.items.map((item, i) => {
+        running += item.proteinG;
+        return {
+          key: `${item.label}-${i}`,
+          name: item.label,
+          portion: item.portion,
+          proteinG: Math.round(item.proteinG),
+          running: Math.round(running),
+          icon: ICON_BY_LABEL[item.label] ?? null,
+          emoji: item.emoji ?? null,
+        };
+      });
+      return {
+        tiles,
+        covered: Math.round(guidance.totalProteinG ?? running),
+        guides: {
+          carb: guidance.carbGuidance,
+          fat: guidance.fatGuidance,
+          fiber: guidance.fiberGuidance,
+        },
+      };
+    }
+  } catch {
+    // Engine food guidance unavailable — fall through to the local library.
+  }
+
+  // INTEGRATION: remove fallback — the engine's buildFoodGuidance() is the
+  // source of truth; this local library only covers it throwing.
+  const tiles = buildPortionTiles(proteinG);
+  return {
+    tiles: tiles.map((t) => ({
+      key: t.icon,
+      name: t.name,
+      portion: t.portion,
+      proteinG: t.proteinG,
+      running: t.running,
+      icon: t.icon,
+      emoji: null,
+    })),
+    covered: tiles.length ? tiles[tiles.length - 1].running : 0,
+    guides: null,
+  };
+}
+
 function FoodSection({ plan }: { plan: PlanResult }) {
   const proteinG = plan.macros.proteinG;
-  // INTEGRATION: remove fallback — swap for the engine's food-guidance helper
-  // (engine/foodGuidance.ts) inside the same try/catch as generatePlan().
-  const tiles = buildPortionTiles(proteinG);
-  const covered = tiles.length ? tiles[tiles.length - 1].running : 0;
+  const { tiles, covered, guides } = resolveFoodTiles(proteinG);
   const remainder = Math.max(0, Math.round(proteinG - covered));
 
   return (
@@ -896,21 +1040,30 @@ function FoodSection({ plan }: { plan: PlanResult }) {
       </p>
 
       <div className="sub">What {fmt(proteinG)} g of protein looks like in a day</div>
-      <div className="portions">
+      <div
+        className="portions"
+        style={{ gridTemplateColumns: `repeat(${Math.min(5, Math.max(1, tiles.length))}, 1fr)` }}
+      >
         {tiles.map((tile) => (
-          <div className="portion" key={tile.icon}>
+          <div className="portion" key={tile.key}>
             <div className="glyph">
-              <svg
-                viewBox="0 0 44 44"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                {GLYPHS[tile.icon]}
-              </svg>
+              {tile.icon ? (
+                <svg
+                  viewBox="0 0 44 44"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  {GLYPHS[tile.icon]}
+                </svg>
+              ) : (
+                <span className="glyph-emoji" aria-hidden="true">
+                  {tile.emoji ?? '•'}
+                </span>
+              )}
             </div>
             <div className="portion-n">{tile.name}</div>
             <div className="portion-p">{tile.portion}</div>
@@ -918,7 +1071,7 @@ function FoodSection({ plan }: { plan: PlanResult }) {
               {tile.proteinG}
               <span> g</span>
             </div>
-            <div className="portion-run">running {tile.running}</div>
+            <div className="portion-run">{tile.running} g so far</div>
           </div>
         ))}
       </div>
@@ -942,8 +1095,8 @@ function FoodSection({ plan }: { plan: PlanResult }) {
             {fmt(plan.macros.carbsG)} g
           </div>
           <div className="guide-t">
-            Anchor carbs to training days. A cupped handful of rice, potato, or oats at the meal
-            before and the meal after lifting covers most of it.
+            {guides?.carb ??
+              'Anchor carbs to training days. A cupped handful of rice, potato, or oats at the meal before and the meal after lifting covers most of it.'}
           </div>
         </div>
         <div className="guide">
@@ -952,8 +1105,8 @@ function FoodSection({ plan }: { plan: PlanResult }) {
             {fmt(plan.macros.fatG)} g
           </div>
           <div className="guide-t">
-            Roughly two tablespoons of olive oil plus a small handful of nuts, on top of the fat
-            already in the fish and eggs above. Do not cut fat further to make room for carbs.
+            {guides?.fat ??
+              'Roughly two tablespoons of olive oil plus a small handful of nuts, on top of the fat already in the fish and eggs above. Do not cut fat further to make room for carbs.'}
           </div>
         </div>
         <div className="guide">
@@ -962,8 +1115,8 @@ function FoodSection({ plan }: { plan: PlanResult }) {
             {fmt(plan.macros.fiberG)} g
           </div>
           <div className="guide-t">
-            Half your plate vegetables at two meals, plus one serving of beans, lentils, or
-            berries, covers most of the {fmt(plan.macros.fiberG)} g target.
+            {guides?.fiber ??
+              `Half your plate vegetables at two meals, plus one serving of beans, lentils, or berries, covers most of the ${fmt(plan.macros.fiberG)} g target.`}
           </div>
         </div>
       </div>

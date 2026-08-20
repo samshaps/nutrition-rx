@@ -1,0 +1,366 @@
+/*
+ * Roster page styles.
+ * Ported from mocks/mock-roster.html — the `.mock-roster` scope prefix removed.
+ * Top-bar rules live in components/AppBar.css; chip + button primitives live in
+ * styles/ui.css and are reused here rather than re-declared.
+ */
+
+.nrx-roster {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---------- page shell ---------- */
+
+.nrx-roster .nrx-main {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 32px 24px 44px;
+  flex: 1 1 auto;
+}
+
+.nrx-pagehead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+
+.nrx-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.nrx-h1 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.nrx-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+/* ---------- search ---------- */
+
+.nrx-search {
+  position: relative;
+  min-width: 240px;
+  flex: 0 1 300px;
+}
+
+.nrx-search svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: block;
+  pointer-events: none;
+}
+
+.nrx-search-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 8px 12px 8px 32px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.nrx-search-input::placeholder {
+  color: var(--muted);
+}
+
+.nrx-search-input:hover {
+  border-color: var(--muted);
+}
+
+.nrx-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ---------- card grid ---------- */
+
+.nrx-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.nrx-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.nrx-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(28, 43, 51, 0.07);
+  transform: translateY(-1px);
+}
+
+.nrx-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.nrx-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.nrx-name-wrap {
+  min-width: 0;
+  margin-right: auto;
+}
+
+.nrx-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+
+.nrx-demo {
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.nrx-menu {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.nrx-menu:hover {
+  background: var(--paper);
+  border-color: var(--line);
+  color: var(--danger);
+}
+
+.nrx-menu:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  color: var(--danger);
+}
+
+.nrx-menu svg {
+  display: block;
+}
+
+/* ---------- stat line ---------- */
+
+.nrx-stats {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 11px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.nrx-stat {
+  min-width: 0;
+}
+
+.nrx-stat-label {
+  font-family: var(--font-display);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 3px;
+}
+
+.nrx-stat-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  color: var(--ink);
+  display: block;
+}
+
+.nrx-stat-value .nrx-unit {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.nrx-badge-src {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: var(--paper);
+  color: var(--ink);
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.nrx-badge-src-est {
+  color: var(--muted);
+}
+
+/* ---------- card foot ---------- */
+
+.nrx-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nrx-updated {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.nrx-open {
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nrx-open svg {
+  display: block;
+}
+
+/* ---------- empty state ---------- */
+
+.nrx-empty {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.nrx-empty-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.nrx-empty-note {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  max-width: 46ch;
+}
+
+.nrx-empty .btn-primary {
+  margin-top: 6px;
+}
+
+/* ---------- footer ---------- */
+
+.nrx-footer {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.nrx-footer-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .nrx-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .nrx-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nrx-roster .nrx-main {
+    padding: 24px 16px 36px;
+  }
+
+  .nrx-footer-inner {
+    padding: 14px 16px;
+  }
+
+  .nrx-search {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .nrx-h1 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 400px) {
+  .nrx-stats {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+}

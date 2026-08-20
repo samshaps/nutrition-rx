@@ -204,7 +204,9 @@ export function emptyForm(): IntakeForm {
     heightIn: '',
     weight: '',
     weightUnit: 'lb',
-    bodyCompSource: 'none',
+    // Matches the mock's default: the scan fields are offered, and choosing
+    // "Not available" is an explicit act (BUILD_PLAN decision 4).
+    bodyCompSource: 'scan',
     bodyFatPct: '',
     ffmKg: '',
     bodyCompLast: null,

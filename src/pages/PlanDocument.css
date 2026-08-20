@@ -1,0 +1,1450 @@
+/*
+ * Plan document styles.
+ *
+ * Ported from the approved mock `mocks/mock-plan.html`. The mock's CSS was
+ * written scoped under `.mock-plan`; here the same rules are scoped under
+ * `.plan-doc` (the page root) so that generic class names — .sheet, .step,
+ * .macro, .day — cannot collide with the roster / intake pages. Values are
+ * verbatim from the mock; do not restyle without re-approving against it.
+ *
+ * The print block at the bottom is new (the mock is screen-only) and is what
+ * turns this page into a two-page US Letter handout.
+ */
+
+.plan-doc,
+.plan-doc *,
+.plan-doc *::before,
+.plan-doc *::after {
+  box-sizing: border-box;
+}
+
+.plan-doc {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), 'Source Sans 3', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.plan-doc p {
+  margin: 0;
+}
+
+/* ---------------- chrome strip (breadcrumb + actions) ---------------- */
+.plan-doc .chrome {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 11px 22px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.plan-doc .crumbs {
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.plan-doc .crumbs i {
+  font-style: normal;
+  color: var(--line);
+}
+.plan-doc .crumbs a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.plan-doc .crumbs a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+.plan-doc .crumbs .here {
+  color: var(--ink);
+  font-weight: 600;
+}
+.plan-doc .bar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.plan-doc .btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 9px 14px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.plan-doc .btn:hover {
+  border-color: var(--muted);
+}
+.plan-doc .btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+}
+.plan-doc .btn--primary:hover {
+  background: #0c5749;
+  border-color: #0c5749;
+}
+.plan-doc .btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------------- ground + sheet ---------------- */
+.plan-doc .ground {
+  padding: 30px 20px 70px;
+  background: var(--paper);
+}
+.plan-doc .sheet {
+  max-width: 820px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(28, 43, 51, 0.05), 0 14px 34px -18px rgba(28, 43, 51, 0.3);
+  padding: 50px 56px 40px;
+}
+
+/* ---------------- sheet masthead ---------------- */
+.plan-doc .mast {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.plan-doc .eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.plan-doc .mast h1 {
+  margin: 7px 0 0;
+  font-family: var(--font-display), 'Archivo', system-ui, sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.1;
+}
+.plan-doc .mast-right {
+  text-align: right;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  padding-top: 3px;
+}
+.plan-doc .mast-right .date {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  font-size: 12.5px;
+}
+
+.plan-doc .facts {
+  margin-top: 22px;
+  padding: 14px 0 15px;
+  border-top: 1px solid var(--line);
+  border-bottom: 2px solid var(--ink);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 14px 18px;
+}
+.plan-doc .fact-k {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.plan-doc .fact-v {
+  margin-top: 3px;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  color: var(--ink);
+}
+.plan-doc .fact-v em {
+  font-style: normal;
+  color: var(--muted);
+  font-size: 12px;
+}
+.plan-doc .fact-v.is-text {
+  font-family: var(--font-body), 'Source Sans 3', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+}
+
+/* ---------------- sections ---------------- */
+.plan-doc .sec {
+  margin-top: 34px;
+}
+.plan-doc .sec + .sec {
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+.plan-doc .sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+}
+.plan-doc .sec-num {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid var(--accent-soft);
+  background: var(--accent-soft);
+  border-radius: 3px;
+  padding: 3px 7px;
+  line-height: 1;
+}
+.plan-doc .sec-head h2 {
+  margin: 0;
+  font-family: var(--font-display), 'Archivo', system-ui, sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+}
+.plan-doc .sec-lead {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14.5px;
+  max-width: 62ch;
+}
+.plan-doc .sub {
+  margin: 26px 0 12px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------------- derivation chain ---------------- */
+.plan-doc .chain {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+  padding: 4px;
+}
+.plan-doc .step {
+  flex: 1 1 130px;
+  padding: 12px 13px;
+  background: var(--surface);
+  border-radius: 3px;
+}
+.plan-doc .step-k {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.35;
+  min-height: 26px;
+}
+.plan-doc .step-v {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  margin-top: 5px;
+  color: var(--ink);
+}
+.plan-doc .step-v small {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0;
+  margin-left: 3px;
+}
+.plan-doc .op {
+  flex: 0 0 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  color: var(--muted);
+}
+.plan-doc .step--total {
+  background: var(--accent-soft);
+}
+.plan-doc .step--total .step-v {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.plan-doc .badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 3px;
+  padding: 3px 7px;
+  line-height: 1.3;
+}
+.plan-doc .tiers {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.plan-doc .tier {
+  border-bottom: 1px dotted var(--line);
+  padding-bottom: 1px;
+}
+.plan-doc .tier b {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  font-size: 10.5px;
+  margin-right: 3px;
+}
+.plan-doc .tier--on {
+  color: var(--ink);
+  font-weight: 700;
+  border-bottom: 1px solid var(--ink);
+}
+.plan-doc .tier-sep {
+  color: var(--line);
+}
+.plan-doc .tier-note {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+/* ---------------- headline target ---------------- */
+.plan-doc .target {
+  margin-top: 26px;
+  display: flex;
+  align-items: flex-end;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.plan-doc .target-num {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 60px;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  color: var(--accent);
+}
+.plan-doc .target-unit {
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.plan-doc .target-side {
+  flex: 1 1 240px;
+  border-left: 1px solid var(--line);
+  padding-left: 20px;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.plan-doc .target-side b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------------- clamp callout ---------------- */
+.plan-doc .clamp {
+  margin-top: 22px;
+  background: var(--warn-soft);
+  border: 1px solid var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: 4px;
+  padding: 18px 22px 20px;
+}
+.plan-doc .clamp-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warn);
+}
+.plan-doc .clamp-say {
+  margin-top: 9px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 60ch;
+}
+.plan-doc .clamp-say b {
+  font-weight: 700;
+}
+.plan-doc .swap {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+.plan-doc .swap-from {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--warn);
+}
+.plan-doc .swap-arrow {
+  color: var(--warn);
+}
+.plan-doc .swap-to {
+  color: var(--ink);
+  font-weight: 500;
+}
+.plan-doc .swap-lab {
+  font-family: var(--font-body), 'Source Sans 3', system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.plan-doc .eq {
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+.plan-doc .term {
+  text-align: center;
+  min-width: 34px;
+}
+.plan-doc .term-v {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.plan-doc .term-k {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.3;
+}
+.plan-doc .term--op .term-v {
+  color: var(--muted);
+}
+.plan-doc .term--out .term-v {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+/* ---------------- EA meter ---------------- */
+.plan-doc .ea {
+  margin-top: 26px;
+}
+.plan-doc .ea-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.plan-doc .ea-val {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  color: var(--ink);
+}
+.plan-doc .ea-val em {
+  font-style: normal;
+  font-family: var(--font-body), 'Source Sans 3', system-ui, sans-serif;
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-left: 5px;
+}
+.plan-doc .meter {
+  margin-top: 26px;
+  position: relative;
+}
+.plan-doc .meter-bands {
+  display: flex;
+  height: 13px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.plan-doc .band {
+  position: relative;
+}
+.plan-doc .band-fill {
+  position: absolute;
+  inset: 0;
+}
+.plan-doc .band--low {
+  flex: 50;
+}
+.plan-doc .band--low .band-fill {
+  background: var(--danger);
+  opacity: 0.22;
+}
+.plan-doc .band--red {
+  flex: 25;
+}
+.plan-doc .band--red .band-fill {
+  background: var(--warn);
+  opacity: 0.26;
+}
+.plan-doc .band--opt {
+  flex: 25;
+}
+.plan-doc .band--opt .band-fill {
+  background: var(--accent);
+  opacity: 0.26;
+}
+
+.plan-doc .marker {
+  position: absolute;
+  left: 50%;
+  top: -22px;
+  bottom: -5px;
+  width: 2px;
+  background: var(--ink);
+  transform: translateX(-1px);
+}
+.plan-doc .marker-lab {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--surface);
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.plan-doc .meter-legend {
+  display: flex;
+  margin-top: 7px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.plan-doc .leg {
+  padding-right: 6px;
+}
+.plan-doc .leg--low {
+  flex: 50;
+}
+.plan-doc .leg--red {
+  flex: 25;
+}
+.plan-doc .leg--opt {
+  flex: 25;
+}
+.plan-doc .leg b {
+  display: block;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 11.5px;
+}
+.plan-doc .leg--red b {
+  color: var(--warn);
+}
+.plan-doc .ea-note {
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--muted);
+  max-width: 66ch;
+}
+
+/* EA unavailable — no body composition on file. */
+.plan-doc .ea-missing {
+  margin-top: 22px;
+  background: var(--warn-soft);
+  border: 1px solid var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: 4px;
+  padding: 15px 18px 16px;
+}
+.plan-doc .ea-missing .clamp-tag {
+  color: var(--warn);
+}
+.plan-doc .ea-missing p {
+  margin-top: 7px;
+  font-size: 14px;
+  color: var(--ink);
+  max-width: 62ch;
+}
+
+/* ---------------- macros ---------------- */
+.plan-doc .macros {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 10px;
+}
+.plan-doc .macro {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 15px 15px 14px;
+  background: var(--surface);
+}
+.plan-doc .macro-k {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.plan-doc .macro-v {
+  margin-top: 6px;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 30px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ink);
+}
+.plan-doc .macro-v span {
+  font-size: 15px;
+  color: var(--muted);
+  margin-left: 2px;
+}
+.plan-doc .macro-sub {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.plan-doc .macro--protein {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+.plan-doc .macro--protein .macro-k {
+  color: var(--accent);
+}
+.plan-doc .macro--protein .macro-v {
+  font-size: 46px;
+  color: var(--accent);
+}
+.plan-doc .macro--protein .macro-v span {
+  color: var(--accent);
+  font-size: 20px;
+}
+.plan-doc .macro--protein .macro-sub {
+  color: var(--ink);
+}
+
+/* macro flags — small chips under the macro row */
+.plan-doc .macro-flags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.plan-doc .flagchip {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  border-radius: 3px;
+  padding: 4px 8px;
+  background: var(--warn-soft);
+  border: 1px solid #f0dfc2;
+  color: var(--warn);
+}
+
+/* ---------------- gap bars ---------------- */
+.plan-doc .gaps {
+  margin-top: 12px;
+}
+.plan-doc .gap + .gap {
+  margin-top: 18px;
+}
+.plan-doc .gap-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+}
+.plan-doc .gap-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+.plan-doc .gap-nums {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.plan-doc .gap-nums b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.plan-doc .track {
+  position: relative;
+  margin-top: 7px;
+  height: 10px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+.plan-doc .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--muted);
+  border-radius: 1px;
+}
+.plan-doc .gap-foot {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.plan-doc .gap--key .track {
+  height: 16px;
+}
+.plan-doc .gap--key .fill {
+  background: var(--accent);
+}
+.plan-doc .gap--key .gap-name {
+  font-size: 14.5px;
+}
+.plan-doc .gap-flag {
+  margin-top: 10px;
+  padding: 10px 13px;
+  background: var(--accent-soft);
+  border-radius: 3px;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.plan-doc .gap-flag b {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.plan-doc .recall-note {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---------------- food guidance ---------------- */
+.plan-doc .portions {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.plan-doc .portion {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px 12px 12px;
+  text-align: center;
+  background: var(--surface);
+}
+.plan-doc .glyph {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+.plan-doc .glyph svg {
+  display: block;
+  width: 30px;
+  height: 30px;
+}
+.plan-doc .portion-n {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.plan-doc .portion-p {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.plan-doc .portion-g {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  color: var(--ink);
+}
+.plan-doc .portion-g span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.plan-doc .portion-run {
+  margin-top: 4px;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+.plan-doc .portion-total {
+  margin-top: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 15px;
+  background: var(--paper);
+  border-radius: 4px;
+}
+.plan-doc .portion-total .pt-v {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 20px;
+  color: var(--accent);
+}
+.plan-doc .portion-total .pt-t {
+  font-size: 13.5px;
+  color: var(--muted);
+  flex: 1 1 240px;
+}
+
+.plan-doc .guides {
+  margin-top: 24px;
+}
+.plan-doc .guide {
+  display: flex;
+  gap: 16px;
+  padding: 13px 0;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.plan-doc .guide:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.plan-doc .guide-k {
+  flex: 0 0 130px;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.plan-doc .guide-k em {
+  display: block;
+  font-style: normal;
+  font-family: var(--font-body), 'Source Sans 3', system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.plan-doc .guide-t {
+  flex: 1 1 260px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ---------------- page break ---------------- */
+.plan-doc .pagebreak {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 34px 0 4px;
+}
+.plan-doc .pagebreak::before,
+.plan-doc .pagebreak::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed var(--line);
+}
+.plan-doc .pagebreak span {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------------- exercise ---------------- */
+.plan-doc .rx {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.plan-doc .rx-card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 15px 16px;
+}
+.plan-doc .rx-k {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.plan-doc .rx-v {
+  margin-top: 6px;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.plan-doc .rx-v span {
+  font-size: 13px;
+  color: var(--muted);
+  margin-left: 3px;
+}
+.plan-doc .rx-t {
+  margin-top: 7px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.plan-doc .ramp {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  align-items: end;
+}
+.plan-doc .wk {
+  text-align: center;
+}
+.plan-doc .wk-bar {
+  height: 78px;
+  display: flex;
+  align-items: flex-end;
+  background: var(--paper);
+  border-radius: 3px 3px 0 0;
+  padding: 4px;
+}
+.plan-doc .wk-bar i {
+  display: block;
+  width: 100%;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+.plan-doc .wk-v {
+  border-top: 2px solid var(--ink);
+  padding-top: 7px;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  color: var(--ink);
+}
+.plan-doc .wk-v span {
+  font-size: 10px;
+  color: var(--muted);
+  display: block;
+  margin-top: 1px;
+}
+.plan-doc .wk-k {
+  margin-top: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.plan-doc .split {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.plan-doc .day {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 10px 8px 11px;
+  text-align: center;
+  min-height: 92px;
+}
+.plan-doc .day-n {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.plan-doc .day-a {
+  margin-top: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.plan-doc .day-a em {
+  display: block;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--muted);
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  margin-top: 3px;
+}
+.plan-doc .day--lift {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+.plan-doc .day--lift .day-a {
+  color: var(--accent);
+}
+.plan-doc .day--lift .day-n {
+  border-bottom-color: var(--surface);
+}
+.plan-doc .day--rest .day-a {
+  color: var(--muted);
+  font-weight: 400;
+}
+.plan-doc .split-note {
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--muted);
+  max-width: 68ch;
+}
+
+/* engine notes list */
+.plan-doc .notes {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  color: var(--muted);
+  max-width: 68ch;
+}
+.plan-doc .notes li + li {
+  margin-top: 5px;
+}
+
+/* ---------------- footer ---------------- */
+.plan-doc .colophon {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 2px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.plan-doc .colophon-l {
+  flex: 1 1 300px;
+}
+.plan-doc .prepared {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.plan-doc .disclaim {
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 60ch;
+}
+.plan-doc .colophon-r {
+  text-align: right;
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---------------- responsive ---------------- */
+@media (max-width: 720px) {
+  .plan-doc .sheet {
+    padding: 30px 22px 28px;
+  }
+  .plan-doc .mast h1 {
+    font-size: 25px;
+  }
+  .plan-doc .mast-right {
+    text-align: left;
+  }
+  .plan-doc .target-num {
+    font-size: 48px;
+  }
+  .plan-doc .target-side {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .plan-doc .macros {
+    grid-template-columns: 1fr 1fr;
+  }
+  .plan-doc .macro--protein {
+    grid-column: 1 / -1;
+  }
+  .plan-doc .portions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .plan-doc .rx {
+    grid-template-columns: 1fr;
+  }
+  .plan-doc .op {
+    flex-basis: 100%;
+    height: 16px;
+  }
+  .plan-doc .step {
+    flex-basis: calc(50% - 2px);
+  }
+  .plan-doc .split {
+    grid-template-columns: 1fr;
+  }
+  .plan-doc .day {
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    gap: 14px;
+    padding: 9px 12px;
+  }
+  .plan-doc .day-n {
+    border-bottom: 0;
+    padding-bottom: 0;
+    flex: 0 0 42px;
+  }
+  .plan-doc .day-a {
+    margin-top: 0;
+    text-align: right;
+  }
+  .plan-doc .day-a em {
+    display: inline;
+    margin-left: 6px;
+  }
+  .plan-doc .day--lift .day-n {
+    border-bottom-color: transparent;
+  }
+  .plan-doc .meter-legend {
+    font-size: 10px;
+  }
+}
+@media (max-width: 430px) {
+  .plan-doc .ground {
+    padding: 18px 10px 44px;
+  }
+  .plan-doc .sheet {
+    padding: 24px 16px 22px;
+  }
+  .plan-doc .chrome {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .plan-doc .crumbs {
+    font-size: 12px;
+    flex-basis: 100%;
+    order: 3;
+  }
+  .plan-doc .bar-actions {
+    gap: 7px;
+  }
+  .plan-doc .btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .plan-doc .mast h1 {
+    font-size: 22px;
+  }
+  .plan-doc .target-num {
+    font-size: 42px;
+  }
+  .plan-doc .macros {
+    grid-template-columns: 1fr;
+  }
+  .plan-doc .portions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .plan-doc .step {
+    flex-basis: 100%;
+  }
+  .plan-doc .guide-k {
+    flex-basis: 100%;
+  }
+  .plan-doc .clamp {
+    padding: 15px 15px 17px;
+  }
+  .plan-doc .clamp-say {
+    font-size: 15px;
+  }
+  .plan-doc .ramp {
+    gap: 5px;
+  }
+  .plan-doc .wk-v {
+    font-size: 14px;
+  }
+}
+
+/* ---------------- print: two pages of US Letter ---------------- */
+@page {
+  size: letter;
+  margin: 0.5in;
+}
+
+@media print {
+  /* App chrome never prints. (.nrx-topbar hides itself in AppBar.css.) */
+  .plan-doc .chrome {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff;
+  }
+
+  .plan-doc {
+    background: #fff;
+    font-size: 10.5px;
+    line-height: 1.42;
+  }
+
+  .plan-doc .ground {
+    padding: 0;
+    background: #fff;
+  }
+
+  .plan-doc .sheet {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: #fff;
+  }
+
+  /* Keep the band fills, chips and callout tints visible on a color printer;
+     the borders below carry the same meaning in grayscale. */
+  .plan-doc,
+  .plan-doc * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* --- tighten the vertical rhythm so the sheet lands on two pages --- */
+  .plan-doc .mast h1 {
+    font-size: 21px;
+  }
+  .plan-doc .facts {
+    margin-top: 12px;
+    padding: 9px 0 10px;
+    gap: 9px 14px;
+  }
+  .plan-doc .sec {
+    margin-top: 18px;
+  }
+  .plan-doc .sec + .sec {
+    margin-top: 16px;
+    padding-top: 14px;
+  }
+  .plan-doc .sec-head h2 {
+    font-size: 16px;
+  }
+  .plan-doc .sec-lead {
+    margin-top: 5px;
+    font-size: 10.5px;
+  }
+  .plan-doc .sub {
+    margin: 14px 0 7px;
+  }
+  .plan-doc .chain {
+    margin-top: 10px;
+  }
+  .plan-doc .step {
+    padding: 8px 9px;
+  }
+  .plan-doc .step-v {
+    font-size: 16px;
+  }
+  .plan-doc .target {
+    margin-top: 14px;
+  }
+  .plan-doc .target-num {
+    font-size: 42px;
+  }
+  .plan-doc .clamp {
+    margin-top: 12px;
+    padding: 11px 14px 12px;
+  }
+  .plan-doc .clamp-say {
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .plan-doc .eq {
+    margin-top: 10px;
+    padding-top: 9px;
+  }
+  .plan-doc .term-v {
+    font-size: 13px;
+  }
+  .plan-doc .ea {
+    margin-top: 14px;
+  }
+  .plan-doc .meter {
+    margin-top: 20px;
+  }
+  .plan-doc .ea-note {
+    font-size: 10px;
+    margin-top: 8px;
+  }
+  .plan-doc .macro {
+    padding: 9px 10px;
+  }
+  .plan-doc .macro-v {
+    font-size: 21px;
+  }
+  .plan-doc .macro--protein .macro-v {
+    font-size: 32px;
+  }
+  .plan-doc .macro-sub {
+    font-size: 9.5px;
+    margin-top: 4px;
+  }
+  .plan-doc .gap + .gap {
+    margin-top: 11px;
+  }
+  .plan-doc .gap-foot,
+  .plan-doc .gap-flag {
+    font-size: 10px;
+  }
+  .plan-doc .portions {
+    margin-top: 9px;
+  }
+  .plan-doc .portion {
+    padding: 9px 8px 8px;
+  }
+  .plan-doc .glyph {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 6px;
+  }
+  .plan-doc .glyph svg {
+    width: 21px;
+    height: 21px;
+  }
+  .plan-doc .portion-g {
+    font-size: 13px;
+    margin-top: 6px;
+    padding-top: 5px;
+  }
+  .plan-doc .portion-total {
+    padding: 8px 11px;
+  }
+  .plan-doc .portion-total .pt-t {
+    font-size: 10px;
+  }
+  .plan-doc .guides {
+    margin-top: 12px;
+  }
+  .plan-doc .guide {
+    padding: 8px 0;
+  }
+  .plan-doc .guide-t {
+    font-size: 10.5px;
+  }
+  .plan-doc .rx-v {
+    font-size: 18px;
+  }
+  .plan-doc .rx-t,
+  .plan-doc .split-note,
+  .plan-doc .notes {
+    font-size: 10.5px;
+  }
+  .plan-doc .wk-bar {
+    height: 54px;
+  }
+  .plan-doc .day {
+    min-height: 66px;
+  }
+  .plan-doc .colophon {
+    margin-top: 18px;
+    padding-top: 10px;
+  }
+
+  /* The dashed on-screen divider is replaced by a real page break. */
+  .plan-doc .pagebreak {
+    display: none;
+  }
+  .plan-doc .sec--break {
+    break-before: page;
+    page-break-before: always;
+    border-top: 0;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  /* Don't split a callout, a card row, or the split grid across the fold. */
+  .plan-doc .clamp,
+  .plan-doc .ea,
+  .plan-doc .macros,
+  .plan-doc .gaps,
+  .plan-doc .portions,
+  .plan-doc .rx,
+  .plan-doc .ramp,
+  .plan-doc .split,
+  .plan-doc .colophon {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Grayscale safety: the amber callout keeps a hard border either way. */
+  .plan-doc .clamp,
+  .plan-doc .ea-missing {
+    border: 1px solid var(--warn);
+    border-left: 3px solid var(--warn);
+  }
+  .plan-doc .flagchip {
+    border-color: var(--warn);
+  }
+  .plan-doc .macro--protein,
+  .plan-doc .sec-num,
+  .plan-doc .step--total,
+  .plan-doc .day--lift,
+  .plan-doc .gap-flag {
+    border: 1px solid var(--line);
+  }
+  .plan-doc .marker,
+  .plan-doc .marker-lab {
+    background: var(--ink);
+  }
+}

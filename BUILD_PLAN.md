@@ -103,6 +103,7 @@ UI accepts imperial (lb, ft/in) and metric; storage is metric.
 2. **Food guidance** — portion-anchored equivalents composed from a small food library (chicken, Greek yogurt, eggs, whey, rice, oats, olive oil, nuts, vegetables...), rendered with simple visual portion references (icons/emoji-scale, not photography).
 3. **Exercise prescription** — days/wk resistance + cardio, minutes/session, proposed weekly split grid, 4-week progression ramp from current baseline.
 4. **"At a glance" closing summary** (Randee's request, 2026-08-20): a compact boxed row ending the document with her four items — energy availability, calorie goal, protein goal, exercise recommendation.
+5. **"Beyond the numbers" closing blurb** (Randee, 2026-08-20): a short note after the summary that stress, mental health, medical history, and sleep quality also affect metabolism and body composition and are considered by the provider alongside this plan.
 
 **Copy/provenance rules from Randee's mock review (2026-08-20):** food-guidance running totals say "72 g so far", not "running 72"; the EA meter carries a provenance footnote (30 kcal/kg FFM comes from RED-S / low-energy-availability research, strongest in athletes, used as a conservative default — thresholds are the provider's call; she is researching the evidence base herself). v1.1 candidate: provider-editable protein dose and EA threshold per patient.
 

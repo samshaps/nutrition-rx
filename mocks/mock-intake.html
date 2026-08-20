@@ -1,0 +1,760 @@
+<style>
+.mock-intake {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-bottom: 96px;
+  -webkit-font-smoothing: antialiased;
+}
+.mock-intake *,
+.mock-intake *::before,
+.mock-intake *::after { box-sizing: border-box; }
+
+/* ---------- app bar ---------- */
+.mock-intake .appbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.mock-intake .wordmark {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.mock-intake .wordmark-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--accent);
+  display: inline-block;
+  position: relative;
+}
+.mock-intake .wordmark-mark::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  width: 10px;
+  height: 2px;
+  background: var(--surface);
+}
+.mock-intake .appbar-spacer { flex: 1 1 auto; }
+.mock-intake .appbar-note {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+/* ---------- page head ---------- */
+.mock-intake .page-head {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 24px 6px;
+}
+.mock-intake .crumbs {
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+}
+.mock-intake .crumbs .crumb-link {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1px;
+}
+.mock-intake .crumbs .crumb-sep { padding: 0 7px; color: var(--line); }
+.mock-intake .crumbs .crumb-current { color: var(--ink); }
+.mock-intake .page-title {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+.mock-intake .page-sub {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  max-width: 56ch;
+}
+
+/* ---------- form column ---------- */
+.mock-intake .form-col {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- group card ---------- */
+.mock-intake .group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 20px 22px 22px;
+}
+.mock-intake .group-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.mock-intake .group-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.mock-intake .group-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-right: 2px;
+}
+.mock-intake .tag-optional {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 7px;
+  background: var(--paper);
+}
+.mock-intake .group-unlock {
+  flex: 1 1 260px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* ---------- field grid ---------- */
+.mock-intake .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.mock-intake .field { flex: 1 1 180px; min-width: 0; }
+.mock-intake .field-narrow { flex: 0 1 132px; }
+.mock-intake .field-wide { flex: 1 1 100%; }
+.mock-intake .label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.mock-intake .label-hint {
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.mock-intake .input {
+  display: block;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 9px 11px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--ink);
+  min-height: 38px;
+}
+.mock-intake .input-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+.mock-intake .input-placeholder { color: var(--muted); }
+.mock-intake .input-focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.mock-intake .select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mock-intake .caret {
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  transform: rotate(45deg) translate(-2px, -2px);
+  flex: none;
+}
+.mock-intake .helper {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.45;
+}
+.mock-intake .helper-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 7px 10px;
+  margin-top: 10px;
+  display: block;
+  letter-spacing: -0.01em;
+}
+.mock-intake .note {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 16px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  line-height: 1.45;
+}
+
+/* ---------- input with suffix / unit toggle ---------- */
+.mock-intake .input-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.mock-intake .input-group .input {
+  border: 0;
+  border-radius: 0;
+  flex: 1 1 auto;
+}
+.mock-intake .suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  font-size: 12.5px;
+  color: var(--muted);
+  background: var(--paper);
+  border-left: 1px solid var(--line);
+  flex: none;
+}
+.mock-intake .unit-toggle {
+  display: flex;
+  align-items: stretch;
+  border-left: 1px solid var(--line);
+  flex: none;
+}
+.mock-intake .unit {
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  background: var(--paper);
+}
+.mock-intake .unit + .unit { border-left: 1px solid var(--line); }
+.mock-intake .unit-on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* ---------- segmented control ---------- */
+.mock-intake .segmented {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.mock-intake .seg {
+  padding: 9px 20px;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--surface);
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.mock-intake .seg + .seg { border-left: 1px solid var(--line); }
+.mock-intake .seg-on {
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
+}
+
+/* ---------- exercise rows ---------- */
+.mock-intake .subhead {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin: 22px 0 8px;
+}
+.mock-intake .ex-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--paper);
+  padding: 13px 14px;
+}
+.mock-intake .ex-row .field { flex: 1 1 150px; }
+.mock-intake .ex-row .field-sm { flex: 0 1 108px; }
+.mock-intake .ex-row .input { background: var(--surface); }
+.mock-intake .ex-remove {
+  flex: none;
+  width: 34px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+.mock-intake .ex-add {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px dashed var(--line);
+  border-radius: 5px;
+  padding: 12px 14px;
+  color: var(--muted);
+  font-size: 13.5px;
+  background: var(--paper);
+}
+.mock-intake .ex-summary {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  margin-top: 10px;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- goal cards ---------- */
+.mock-intake .goals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.mock-intake .goal {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  padding: 13px 13px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.mock-intake .goal-on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.mock-intake .radio {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  flex: none;
+  display: block;
+}
+.mock-intake .goal-on .radio {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
+.mock-intake .goal-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.mock-intake .goal-on .goal-name { color: var(--accent); }
+.mock-intake .goal-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+}
+.mock-intake .goal-on .goal-meta { color: var(--accent); }
+
+/* ---------- flags ---------- */
+.mock-intake .flags {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 20px;
+}
+.mock-intake .flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--ink);
+  min-width: 0;
+}
+.mock-intake .checkbox {
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface);
+  flex: none;
+}
+
+/* ---------- footer bar ---------- */
+.mock-intake .footerbar {
+  position: sticky;
+  bottom: 0;
+  margin-top: 26px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  padding: 13px 24px;
+}
+.mock-intake .footerbar-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.mock-intake .save-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  flex: 1 1 200px;
+}
+.mock-intake .btn-link {
+  font-size: 13.5px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-soft);
+  padding-bottom: 1px;
+}
+.mock-intake .btn-primary {
+  background: var(--accent);
+  color: var(--surface);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  padding: 10px 18px;
+  white-space: nowrap;
+}
+
+/* ---------- narrow ---------- */
+@media (max-width: 560px) {
+  .mock-intake .goals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mock-intake .flags { grid-template-columns: 1fr; }
+  .mock-intake .field-narrow { flex: 1 1 120px; }
+  .mock-intake .page-head,
+  .mock-intake .form-col,
+  .mock-intake .appbar,
+  .mock-intake .footerbar { padding-left: 16px; padding-right: 16px; }
+  .mock-intake .group { padding: 18px 16px 20px; }
+}
+@media (max-width: 400px) {
+  .mock-intake .goals { grid-template-columns: 1fr; }
+  .mock-intake .seg { padding: 9px 14px; }
+  .mock-intake .page-title { font-size: 22px; }
+}
+</style>
+
+<section class="mock-intake">
+
+  <div class="appbar">
+    <span class="wordmark"><span class="wordmark-mark"></span>Nutrition Rx</span>
+    <span class="appbar-spacer"></span>
+    <span class="appbar-note">Provider tool · fictional patient data</span>
+  </div>
+
+  <div class="page-head">
+    <div class="crumbs">
+      <span class="crumb-link">Patients</span><span class="crumb-sep">/</span><span class="crumb-current">Maya Torres</span>
+    </div>
+    <h1 class="page-title">Intake</h1>
+    <p class="page-sub">Clinical inputs for the plan. Required groups produce a plan on their own; the optional groups sharpen the math.</p>
+  </div>
+
+  <div class="form-col">
+
+    <!-- 1 · Identity -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">01</span>Identity</span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <span class="label">First name</span>
+          <div class="input">Maya</div>
+        </div>
+        <div class="field">
+          <span class="label">Last name</span>
+          <div class="input">Torres</div>
+        </div>
+        <div class="field field-narrow">
+          <span class="label">Date of birth</span>
+          <div class="input input-num">03/14/1992</div>
+        </div>
+      </div>
+      <p class="helper">Age 34 at today's date — used by the Mifflin-St Jeor equation.</p>
+    </div>
+
+    <!-- 2 · Anthropometrics -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">02</span>Anthropometrics</span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <span class="label">Biological sex</span>
+          <div class="segmented">
+            <span class="seg seg-on">Female</span>
+            <span class="seg">Male</span>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">Height</span>
+          <div class="row" style="gap:10px">
+            <div class="input-group" style="flex:1 1 90px">
+              <div class="input input-num">5</div>
+              <span class="suffix">ft</span>
+            </div>
+            <div class="input-group" style="flex:1 1 90px">
+              <div class="input input-num">6</div>
+              <span class="suffix">in</span>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">Current weight</span>
+          <div class="input-group">
+            <div class="input input-num">165</div>
+            <span class="unit-toggle">
+              <span class="unit unit-on">lb</span>
+              <span class="unit">kg</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <p class="helper">Stored metric: 167.6 cm · 74.8 kg · BMI 26.6</p>
+    </div>
+
+    <!-- 3 · Body composition -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">03</span>Body composition</span>
+        <span class="tag-optional">Optional</span>
+        <span class="group-unlock">Unlocks FFM-based RMR and the energy-availability check.</span>
+      </div>
+      <div class="field">
+        <span class="label">Source</span>
+        <div class="segmented">
+          <span class="seg seg-on">InBody / DEXA scan</span>
+          <span class="seg">Not available</span>
+        </div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <div class="field field-narrow">
+          <span class="label">Body fat <span class="label-hint">%</span></span>
+          <div class="input-group">
+            <div class="input input-num">32</div>
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">Fat-free mass <span class="label-hint">— or enter directly</span></span>
+          <div class="input-group">
+            <div class="input input-num input-placeholder">kg</div>
+            <span class="suffix">kg</span>
+          </div>
+        </div>
+      </div>
+      <span class="helper-mono">FFM 50.9 kg · RMR will use Katch-McArdle</span>
+      <p class="helper">No scan? Choose <strong>Not available</strong> &mdash; calculations fall back to the Mifflin-St Jeor population estimate and the energy-availability check is replaced by a caution note on the plan.</p>
+    </div>
+
+    <!-- 4 · Measured RMR -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">04</span>Measured RMR</span>
+        <span class="tag-optional">Optional</span>
+        <span class="group-unlock">Indirect calorimetry only; overrides all estimates.</span>
+      </div>
+      <div class="row">
+        <div class="field field-narrow">
+          <span class="label">Measured RMR</span>
+          <div class="input-group">
+            <div class="input input-num input-placeholder">kcal/day</div>
+            <span class="suffix">kcal</span>
+          </div>
+        </div>
+        <div class="field" style="flex:2 1 260px">
+          <span class="label">Method</span>
+          <div class="input select">
+            <span class="input-placeholder">Select method — indirect calorimetry, metabolic cart…</span>
+            <span class="caret"></span>
+          </div>
+        </div>
+      </div>
+      <p class="helper">Leave blank unless the value came from a metabolic cart. An InBody estimate belongs in body composition above, not here.</p>
+    </div>
+
+    <!-- 5 · Activity & exercise -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">05</span>Activity &amp; exercise</span>
+      </div>
+      <div class="row">
+        <div class="field field-wide">
+          <span class="label">Daily activity level</span>
+          <div class="input select">
+            <span>Light — mostly seated, some walking</span>
+            <span class="caret"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="subhead">Structured exercise</div>
+      <div class="ex-row">
+        <div class="field">
+          <span class="label">Type</span>
+          <div class="input select">
+            <span>Resistance training</span>
+            <span class="caret"></span>
+          </div>
+        </div>
+        <div class="field field-sm">
+          <span class="label">Sessions/wk</span>
+          <div class="input input-num">4</div>
+        </div>
+        <div class="field field-sm">
+          <span class="label">Min/session</span>
+          <div class="input input-num">60</div>
+        </div>
+        <span class="ex-remove">&times;</span>
+      </div>
+      <div class="ex-add">+ Add exercise</div>
+      <div class="ex-summary">240 min/wk structured · exercise energy expenditure estimated per session for the EA check</div>
+    </div>
+
+    <!-- 6 · 24-hour recall -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">06</span>24-hour recall</span>
+        <span class="tag-optional">Optional</span>
+      </div>
+      <div class="row">
+        <div class="field field-narrow">
+          <span class="label">Current calories</span>
+          <div class="input-group">
+            <div class="input input-num">1,430</div>
+            <span class="suffix">kcal</span>
+          </div>
+        </div>
+        <div class="field field-narrow">
+          <span class="label">Current protein</span>
+          <div class="input-group">
+            <div class="input input-num">68</div>
+            <span class="suffix">g</span>
+          </div>
+        </div>
+        <div class="field"></div>
+      </div>
+      <p class="helper">Shown on the plan as current vs. target.</p>
+    </div>
+
+    <!-- 7 · Goal -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">07</span>Goal</span>
+        <span class="group-unlock">Single select. Drives the energy adjustment and the exercise template.</span>
+      </div>
+      <div class="goals">
+        <div class="goal goal-on">
+          <span class="radio"></span>
+          <span class="goal-name">Lose fat</span>
+          <span class="goal-meta">−15 to −25%</span>
+        </div>
+        <div class="goal">
+          <span class="radio"></span>
+          <span class="goal-name">Gain muscle</span>
+          <span class="goal-meta">+10 to +20%</span>
+        </div>
+        <div class="goal">
+          <span class="radio"></span>
+          <span class="goal-name">Maintain</span>
+          <span class="goal-meta">TDEE</span>
+        </div>
+        <div class="goal">
+          <span class="radio"></span>
+          <span class="goal-name">Improve A1c</span>
+          <span class="goal-meta">−10 to −20%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 · Clinical flags -->
+    <div class="group">
+      <div class="group-head">
+        <span class="group-label"><span class="group-num">08</span>Clinical flags</span>
+      </div>
+      <div class="flags">
+        <span class="flag"><span class="checkbox"></span>Renal disease</span>
+        <span class="flag"><span class="checkbox"></span>Cardiac condition</span>
+        <span class="flag"><span class="checkbox"></span>Pregnancy / lactation</span>
+        <span class="flag"><span class="checkbox"></span>Eating-disorder history</span>
+        <span class="flag"><span class="checkbox"></span>Mobility limitation</span>
+        <span class="flag"><span class="checkbox"></span>On GLP-1</span>
+      </div>
+      <p class="note">Flags cap protein dosing and adjust the exercise prescription.</p>
+    </div>
+
+  </div>
+
+  <div class="footerbar">
+    <div class="footerbar-inner">
+      <span class="save-note">Saved locally · never leaves this browser</span>
+      <span class="btn-link">Load example</span>
+      <span class="btn-primary">Generate plan &rarr;</span>
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,557 @@
+<style>
+.mock-roster {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.mock-roster *,
+.mock-roster *::before,
+.mock-roster *::after { box-sizing: border-box; }
+
+/* ---------- top bar ---------- */
+.mock-roster .nrx-topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.mock-roster .nrx-topbar-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.mock-roster .nrx-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  margin-right: auto;
+}
+.mock-roster .nrx-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.mock-roster .nrx-mark svg { display: block; }
+.mock-roster .nrx-storage-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.mock-roster .nrx-storage-note svg { display: block; flex: none; }
+.mock-roster .nrx-btn-primary {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--surface);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  padding: 8px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, box-shadow 120ms ease;
+}
+.mock-roster .nrx-btn-primary:hover {
+  background: #0c5749;
+  box-shadow: 0 1px 2px rgba(28, 43, 51, 0.18);
+}
+
+/* ---------- page shell ---------- */
+.mock-roster .nrx-main {
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 32px 24px 44px;
+  flex: 1 1 auto;
+}
+
+.mock-roster .nrx-pagehead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+.mock-roster .nrx-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.mock-roster .nrx-h1 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0;
+}
+.mock-roster .nrx-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+.mock-roster .nrx-search {
+  position: relative;
+  min-width: 240px;
+  flex: 0 1 300px;
+}
+.mock-roster .nrx-search svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: block;
+}
+.mock-roster .nrx-search-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 8px 12px 8px 32px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.mock-roster .nrx-search-input::placeholder { color: var(--muted); }
+.mock-roster .nrx-search-input:hover { border-color: var(--muted); }
+.mock-roster .nrx-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ---------- card grid ---------- */
+.mock-roster .nrx-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.mock-roster .nrx-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+.mock-roster .nrx-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(28, 43, 51, 0.07);
+  transform: translateY(-1px);
+}
+
+.mock-roster .nrx-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.mock-roster .nrx-name-wrap { min-width: 0; margin-right: auto; }
+.mock-roster .nrx-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.mock-roster .nrx-demo {
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.mock-roster .nrx-menu {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.mock-roster .nrx-menu:hover {
+  background: var(--paper);
+  border-color: var(--line);
+  color: var(--danger);
+}
+.mock-roster .nrx-menu svg { display: block; }
+
+/* chips */
+.mock-roster .nrx-chiprow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.mock-roster .nrx-chip {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 3px 7px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.mock-roster .nrx-chip-goal {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+  color: var(--accent);
+}
+.mock-roster .nrx-chip-example {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+.mock-roster .nrx-chip-warn {
+  background: var(--warn-soft);
+  border-color: #F0DFC2;
+  color: var(--warn);
+}
+.mock-roster .nrx-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--warn);
+  flex: none;
+}
+
+/* stat line */
+.mock-roster .nrx-stats {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 11px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.mock-roster .nrx-stat { min-width: 0; }
+.mock-roster .nrx-stat-label {
+  font-family: var(--font-display);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 3px;
+}
+.mock-roster .nrx-stat-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 15px;
+  color: var(--ink);
+  display: block;
+}
+.mock-roster .nrx-stat-value .nrx-unit {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.mock-roster .nrx-badge-src {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: var(--paper);
+  color: var(--ink);
+  display: inline-block;
+  white-space: nowrap;
+}
+.mock-roster .nrx-badge-src-est { color: var(--muted); }
+
+.mock-roster .nrx-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mock-roster .nrx-updated {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.mock-roster .nrx-open {
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.mock-roster .nrx-open svg { display: block; }
+
+/* ---------- footer ---------- */
+.mock-roster .nrx-footer {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+.mock-roster .nrx-footer-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .mock-roster .nrx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .mock-roster .nrx-grid { grid-template-columns: minmax(0, 1fr); }
+  .mock-roster .nrx-topbar-inner { padding: 12px 16px; row-gap: 10px; }
+  .mock-roster .nrx-main { padding: 24px 16px 36px; }
+  .mock-roster .nrx-footer-inner { padding: 14px 16px; }
+  .mock-roster .nrx-search { flex: 1 1 100%; min-width: 0; }
+  .mock-roster .nrx-h1 { font-size: 22px; }
+}
+@media (max-width: 400px) {
+  .mock-roster .nrx-storage-note { white-space: normal; }
+  .mock-roster .nrx-stats { flex-wrap: wrap; gap: 10px 16px; }
+}
+</style>
+
+<section class="mock-roster">
+
+  <header class="nrx-topbar">
+    <div class="nrx-topbar-inner">
+      <div class="nrx-wordmark">
+        <span class="nrx-mark" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent)">
+            <path d="M3 12V2h3.2a2.4 2.4 0 0 1 0 4.8H3"/>
+            <path d="M6 6.8 10 12"/>
+            <path d="M10.2 7 13 9.9"/>
+            <path d="M13 7l-2.8 2.9"/>
+          </svg>
+        </span>
+        Nutrition Rx
+      </div>
+
+      <span class="nrx-storage-note">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="5.2" width="8" height="5.3" rx="1"/>
+          <path d="M4 5.2V3.6a2 2 0 0 1 4 0v1.6"/>
+        </svg>
+        All data stays in this browser
+      </span>
+
+      <button class="nrx-btn-primary" type="button">+ New patient</button>
+    </div>
+  </header>
+
+  <main class="nrx-main">
+
+    <div class="nrx-pagehead">
+      <div class="nrx-title-wrap">
+        <h1 class="nrx-h1">Patients</h1>
+        <span class="nrx-count">3</span>
+      </div>
+
+      <div class="nrx-search">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round">
+          <circle cx="6.2" cy="6.2" r="4.2"/>
+          <path d="M9.4 9.4 12.2 12.2"/>
+        </svg>
+        <input class="nrx-search-input" type="text" placeholder="Search by name" value="" readonly>
+      </div>
+    </div>
+
+    <div class="nrx-grid">
+
+      <!-- 1 — Maya Torres -->
+      <article class="nrx-card">
+        <div class="nrx-card-top">
+          <div class="nrx-name-wrap">
+            <h2 class="nrx-name">Maya Torres</h2>
+            <span class="nrx-demo">34 · Female</span>
+          </div>
+          <button class="nrx-menu" type="button" aria-label="Patient options">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <circle cx="7" cy="3" r="1.25"/><circle cx="7" cy="7" r="1.25"/><circle cx="7" cy="11" r="1.25"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="nrx-chiprow">
+          <span class="nrx-chip nrx-chip-goal">Lose fat</span>
+          <span class="nrx-chip nrx-chip-example">Example</span>
+        </div>
+
+        <div class="nrx-stats">
+          <div class="nrx-stat">
+            <span class="nrx-stat-label">Weight</span>
+            <span class="nrx-stat-value">165 <span class="nrx-unit">lb</span></span>
+          </div>
+          <div class="nrx-stat">
+            <span class="nrx-stat-label">RMR source</span>
+            <span class="nrx-badge-src">InBody · FFM</span>
+          </div>
+        </div>
+
+        <div class="nrx-chiprow">
+          <span class="nrx-chip nrx-chip-warn"><span class="nrx-dot"></span>EA floor applied</span>
+        </div>
+
+        <div class="nrx-card-foot">
+          <span class="nrx-updated">Updated Aug 18, 2026</span>
+          <span class="nrx-open">Open plan
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 1.5 6.5 5 3 8.5"/>
+            </svg>
+          </span>
+        </div>
+      </article>
+
+      <!-- 2 — Priya Shah -->
+      <article class="nrx-card">
+        <div class="nrx-card-top">
+          <div class="nrx-name-wrap">
+            <h2 class="nrx-name">Priya Shah</h2>
+            <span class="nrx-demo">47 · Female</span>
+          </div>
+          <button class="nrx-menu" type="button" aria-label="Patient options">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <circle cx="7" cy="3" r="1.25"/><circle cx="7" cy="7" r="1.25"/><circle cx="7" cy="11" r="1.25"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="nrx-chiprow">
+          <span class="nrx-chip nrx-chip-goal">Lose fat</span>
+          <span class="nrx-chip nrx-chip-example">Example</span>
+        </div>
+
+        <div class="nrx-stats">
+          <div class="nrx-stat">
+            <span class="nrx-stat-label">Weight</span>
+            <span class="nrx-stat-value">182 <span class="nrx-unit">lb</span></span>
+          </div>
+          <div class="nrx-stat">
+            <span class="nrx-stat-label">RMR source</span>
+            <span class="nrx-badge-src">InBody · FFM</span>
+          </div>
+        </div>
+
+        <div class="nrx-chiprow">
+          <span class="nrx-chip nrx-chip-warn"><span class="nrx-dot"></span>EA 38 · reduced</span>
+        </div>
+
+        <div class="nrx-card-foot">
+          <span class="nrx-updated">Updated Aug 15, 2026</span>
+          <span class="nrx-open">Open plan
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 1.5 6.5 5 3 8.5"/>
+            </svg>
+          </span>
+        </div>
+      </article>
+
+      <!-- 3 — Devon Park -->
+      <article class="nrx-card">
+        <div class="nrx-card-top">
+          <div class="nrx-name-wrap">
+            <h2 class="nrx-name">Devon Park</h2>
+            <span class="nrx-demo">41 · Male</span>
+          </div>
+          <button class="nrx-menu" type="button" aria-label="Patient options">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              <circle cx="7" cy="3" r="1.25"/><circle cx="7" cy="7" r="1.25"/><circle cx="7" cy="11" r="1.25"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="nrx-chiprow">
+          <span class="nrx-chip nrx-chip-goal">Gain muscle</span>
+          <span class="nrx-chip nrx-chip-example">Example</span>
+        </div>
+
+        <div class="nrx-stats">
+          <div class="nrx-stat">
+            <span class="nrx-stat-label">Weight</span>
+            <span class="nrx-stat-value">171 <span class="nrx-unit">lb</span></span>
+          </div>
+          <div class="nrx-stat">
+            <span class="nrx-stat-label">RMR source</span>
+            <span class="nrx-badge-src nrx-badge-src-est">Estimated · Mifflin</span>
+          </div>
+        </div>
+
+        <div class="nrx-chiprow">
+          <span class="nrx-chip">No body comp</span>
+        </div>
+
+        <div class="nrx-card-foot">
+          <span class="nrx-updated">Updated Aug 12, 2026</span>
+          <span class="nrx-open">Open plan
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 1.5 6.5 5 3 8.5"/>
+            </svg>
+          </span>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <footer class="nrx-footer">
+    <div class="nrx-footer-inner">
+      For use by licensed providers. Plans require clinical judgment and are not medical advice.
+    </div>
+  </footer>
+
+</section>

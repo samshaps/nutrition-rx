@@ -1,0 +1,708 @@
+/*
+ * Intake page styling — ported from mocks/mock-intake.html.
+ *
+ * The mock's rules were written as static markup (divs styled to look like
+ * inputs); here they are re-pointed at real form controls, so each control
+ * additionally gets the appearance/font resets a browser default would
+ * otherwise impose. Values (sizes, colours, spacing) are unchanged.
+ *
+ * Everything stays namespaced under `.intake-page` rather than going global:
+ * the mock's class names (.row, .field, .input, .group) are generic enough to
+ * collide with the other pages' stylesheets.
+ */
+
+.intake-page {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-bottom: 96px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.intake-page *,
+.intake-page *::before,
+.intake-page *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- page head ---------- */
+
+.intake-page .page-head {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 24px 6px;
+}
+
+.intake-page .crumbs {
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  margin-bottom: 10px;
+}
+
+.intake-page .crumbs .crumb-link {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1px;
+}
+
+.intake-page .crumbs .crumb-link:hover {
+  color: var(--ink);
+  border-bottom-color: var(--muted);
+}
+
+.intake-page .crumbs .crumb-sep {
+  padding: 0 7px;
+  color: var(--line);
+}
+
+.intake-page .crumbs .crumb-current {
+  color: var(--ink);
+}
+
+.intake-page .page-title {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.intake-page .page-sub {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  max-width: 56ch;
+}
+
+/* ---------- form column ---------- */
+
+.intake-page .form-col {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- group card ---------- */
+
+.intake-page .group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 20px 22px 22px;
+  margin: 0;
+  min-width: 0;
+}
+
+.intake-page .group-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 0 12px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  width: 100%;
+}
+
+.intake-page .group-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.intake-page .group-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin-right: 2px;
+}
+
+.intake-page .tag-optional {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 7px;
+  background: var(--paper);
+}
+
+.intake-page .group-unlock {
+  flex: 1 1 260px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* ---------- field grid ---------- */
+
+.intake-page .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.intake-page .field {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.intake-page .field-narrow {
+  flex: 0 1 132px;
+}
+
+.intake-page .field-wide {
+  flex: 1 1 100%;
+}
+
+.intake-page .label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.intake-page .label-hint {
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+.intake-page .input {
+  display: block;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 9px 11px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: var(--ink);
+  min-height: 38px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.intake-page .input-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+
+.intake-page .input::placeholder {
+  color: var(--muted);
+}
+
+.intake-page .input:focus,
+.intake-page .input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* Native select gets the mock's caret drawn into its padding. */
+.intake-page select.input {
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235C6E74' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  cursor: pointer;
+}
+
+.intake-page select.input:invalid,
+.intake-page select.input.is-placeholder {
+  color: var(--muted);
+}
+
+/* number inputs: no spinners, the mock has none */
+.intake-page .input[type='number']::-webkit-outer-spin-button,
+.intake-page .input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.intake-page .input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.intake-page .helper {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 8px;
+  margin-bottom: 0;
+  line-height: 1.45;
+}
+
+.intake-page .helper-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 7px 10px;
+  margin-top: 10px;
+  display: block;
+  letter-spacing: -0.01em;
+}
+
+.intake-page .note {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 16px 0 0;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  line-height: 1.45;
+}
+
+/* ---------- validation ---------- */
+
+.intake-page .field-error {
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--danger);
+  margin-top: 6px;
+}
+
+.intake-page .input-invalid,
+.intake-page .input-group-invalid {
+  border-color: var(--danger);
+}
+
+.intake-page .input-invalid:focus,
+.intake-page .input-group:focus-within.input-group-invalid {
+  box-shadow: 0 0 0 3px #F7E7E4;
+}
+
+.intake-page .form-error-summary {
+  font-size: 12.5px;
+  color: var(--danger);
+  flex: 1 1 200px;
+}
+
+/* ---------- input with suffix / unit toggle ---------- */
+
+.intake-page .input-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.intake-page .input-group .input {
+  border: 0;
+  border-radius: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.intake-page .input-group .input:focus,
+.intake-page .input-group .input:focus-visible {
+  box-shadow: none;
+}
+
+.intake-page .input-group:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.intake-page .suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  font-size: 12.5px;
+  color: var(--muted);
+  background: var(--paper);
+  border-left: 1px solid var(--line);
+  flex: none;
+}
+
+.intake-page .unit-toggle {
+  display: flex;
+  align-items: stretch;
+  border-left: 1px solid var(--line);
+  flex: none;
+}
+
+.intake-page .unit {
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  background: var(--paper);
+  border: 0;
+  cursor: pointer;
+}
+
+.intake-page .unit + .unit {
+  border-left: 1px solid var(--line);
+}
+
+.intake-page .unit-on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.intake-page .unit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* ---------- segmented control ---------- */
+
+.intake-page .segmented {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+  max-width: 100%;
+}
+
+.intake-page .seg {
+  padding: 9px 20px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--surface);
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  border: 0;
+  cursor: pointer;
+}
+
+.intake-page .seg + .seg {
+  border-left: 1px solid var(--line);
+}
+
+.intake-page .seg-on {
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
+}
+
+.intake-page .seg:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.intake-page .segmented-invalid {
+  border-color: var(--danger);
+}
+
+/* ---------- exercise rows ---------- */
+
+.intake-page .subhead {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin: 22px 0 8px;
+}
+
+.intake-page .ex-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.intake-page .ex-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--paper);
+  padding: 13px 14px;
+}
+
+.intake-page .ex-row .field {
+  flex: 1 1 150px;
+}
+
+.intake-page .ex-row .field-sm {
+  flex: 0 1 108px;
+}
+
+.intake-page .ex-row .input {
+  background: var(--surface);
+}
+
+.intake-page .ex-remove {
+  flex: none;
+  width: 34px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.intake-page .ex-remove:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+
+.intake-page .ex-remove:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.intake-page .ex-add {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px dashed var(--line);
+  border-radius: 5px;
+  padding: 12px 14px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  background: var(--paper);
+  width: 100%;
+  cursor: pointer;
+}
+
+.intake-page .ex-add:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+
+.intake-page .ex-summary {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  margin-top: 10px;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- goal cards ---------- */
+
+.intake-page .goals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.intake-page .goal {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  padding: 13px 13px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.intake-page .goal-on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.intake-page .goal:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.intake-page .radio {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  flex: none;
+  display: block;
+}
+
+.intake-page .goal-on .radio {
+  border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
+
+.intake-page .goal-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.intake-page .goal-on .goal-name {
+  color: var(--accent);
+}
+
+.intake-page .goal-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+}
+
+.intake-page .goal-on .goal-meta {
+  color: var(--accent);
+}
+
+/* ---------- flags ---------- */
+
+.intake-page .flags {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 20px;
+}
+
+.intake-page .flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--ink);
+  min-width: 0;
+  cursor: pointer;
+}
+
+.intake-page .checkbox {
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface);
+  flex: none;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.intake-page .checkbox:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.intake-page .checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4.5px;
+  top: 1.5px;
+  width: 4px;
+  height: 8px;
+  border: solid var(--surface);
+  border-width: 0 1.6px 1.6px 0;
+  transform: rotate(45deg);
+}
+
+.intake-page .checkbox:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- footer bar ---------- */
+
+.intake-page .footerbar {
+  position: sticky;
+  bottom: 0;
+  margin-top: 26px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  padding: 13px 24px;
+}
+
+.intake-page .footerbar-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.intake-page .save-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  flex: 1 1 200px;
+}
+
+/* ---------- narrow ---------- */
+
+@media (max-width: 560px) {
+  .intake-page .goals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .intake-page .flags {
+    grid-template-columns: 1fr;
+  }
+
+  .intake-page .field-narrow {
+    flex: 1 1 120px;
+  }
+
+  .intake-page .page-head,
+  .intake-page .form-col,
+  .intake-page .footerbar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .intake-page .group {
+    padding: 18px 16px 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .intake-page .goals {
+    grid-template-columns: 1fr;
+  }
+
+  .intake-page .seg {
+    padding: 9px 14px;
+  }
+
+  .intake-page .page-title {
+    font-size: 22px;
+  }
+}

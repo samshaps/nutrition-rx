@@ -21,7 +21,7 @@ import type { EngineInput, PlanResult } from './types';
 import { computeRmr, resolveFfmKg } from './rmr';
 import { computeTdee } from './tdee';
 import { bmi, computeTarget } from './targets';
-import { computeMacros } from './macros';
+import { computeMacros, weeklyExerciseMinutes } from './macros';
 import { computeEnergyAvailability } from './energyAvailability';
 import { computeExercisePrescription } from './exercise';
 
@@ -51,7 +51,9 @@ export {
   computeMacros,
   idealBodyWeightKg,
   MACRO_FLAGS,
-  proteinPerKgForGoal,
+  PROTEIN_VOLUME_BANDS,
+  proteinPerKgForTrainingVolume,
+  weeklyExerciseMinutes,
 } from './macros';
 export {
   computeEnergyAvailability,
@@ -106,7 +108,7 @@ export function generatePlan(input: EngineInput): PlanResult {
     weightKg: input.weightKg,
     heightCm: input.heightCm,
     bmi: bmi(input.weightKg, input.heightCm),
-    goal: input.goal,
+    weeklyExerciseMinutes: weeklyExerciseMinutes(input.exercise),
     clinicalFlags: input.clinicalFlags ?? [],
   });
 

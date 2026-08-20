@@ -781,7 +781,9 @@
 .plan-doc .portions {
   margin-top: 16px;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  /* auto-fill, not auto-fit: the engine may compose fewer than five foods and
+     the tiles should keep the mock's size rather than stretch to fill. */
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
   gap: 10px;
 }
 .plan-doc .portion {
@@ -1142,6 +1144,27 @@
   color: var(--muted);
 }
 
+/* ---------------- beyond the numbers ---------------- */
+.plan-doc .beyond {
+  margin-top: 22px;
+  padding-left: 14px;
+  border-left: 3px solid var(--accent-soft);
+}
+.plan-doc .beyond-k {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.plan-doc .beyond p {
+  margin-top: 5px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 72ch;
+}
+
 /* ---------------- footer ---------------- */
 .plan-doc .colophon {
   margin-top: 34px;
@@ -1389,8 +1412,23 @@
   .plan-doc .step-v {
     font-size: 16px;
   }
+  .plan-doc .badge {
+    font-size: 9.5px;
+    margin-top: 6px;
+  }
+  .plan-doc .tiers {
+    margin-top: 6px;
+    font-size: 9px;
+  }
+  .plan-doc .tier-note {
+    font-size: 9px;
+  }
   .plan-doc .target {
     margin-top: 14px;
+  }
+  .plan-doc .target-side {
+    font-size: 10px;
+    padding-left: 14px;
   }
   .plan-doc .target-num {
     font-size: 42px;
@@ -1433,6 +1471,24 @@
     font-size: 9.5px;
     margin-top: 4px;
   }
+  .plan-doc .ea-val {
+    font-size: 11.5px;
+  }
+  .plan-doc .meter-legend {
+    font-size: 9px;
+  }
+  .plan-doc .recall-note {
+    font-size: 9px;
+  }
+  .plan-doc .gap-head {
+    font-size: 10.5px;
+  }
+  .plan-doc .track {
+    height: 8px;
+  }
+  .plan-doc .gap--key .track {
+    height: 12px;
+  }
   .plan-doc .gap + .gap {
     margin-top: 11px;
   }
@@ -1463,8 +1519,22 @@
     margin-top: 6px;
     padding-top: 5px;
   }
+  .plan-doc .portion-n {
+    font-size: 9.5px;
+  }
+  .plan-doc .portion-p {
+    font-size: 9px;
+  }
+  .plan-doc .portion-run {
+    font-size: 8.5px;
+  }
   .plan-doc .portion-total {
+    margin-top: 8px;
     padding: 8px 11px;
+  }
+  .plan-doc .guide-k {
+    font-size: 11px;
+    flex-basis: 110px;
   }
   .plan-doc .portion-total .pt-t {
     font-size: 10px;
@@ -1522,9 +1592,20 @@
     font-size: 9.5px;
     margin-top: 4px;
   }
+  .plan-doc .beyond {
+    margin-top: 12px;
+    padding-left: 10px;
+    border-left-color: var(--accent);
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .plan-doc .beyond p {
+    font-size: 9.5px;
+    margin-top: 3px;
+  }
   .plan-doc .colophon {
-    margin-top: 14px;
-    padding-top: 9px;
+    margin-top: 12px;
+    padding-top: 8px;
   }
 
   /* The dashed on-screen divider is replaced by a real page break. */

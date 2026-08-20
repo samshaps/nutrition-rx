@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import AppBar from '../components/AppBar';
 import { getPatient } from '../store/patients';
-import { buildFoodGuidance, generatePlan } from '../engine';
+import { ACTIVITY_FACTORS, buildFoodGuidance, generatePlan } from '../engine';
 import type { FoodGuidance } from '../engine';
 import type {
   ActivityLevel,
@@ -102,13 +102,22 @@ function clampPct(n: number, min = 2, max = 100): number {
  * Domain labels
  * ------------------------------------------------------------------ */
 
-const ACTIVITY: Record<ActivityLevel, { factor: number; label: string }> = {
-  sedentary: { factor: 1.2, label: 'sedentary' },
-  light: { factor: 1.375, label: 'lightly active' },
-  moderate: { factor: 1.55, label: 'moderately active' },
-  active: { factor: 1.725, label: 'active' },
-  very_active: { factor: 1.9, label: 'very active' },
+/** Plain-language names for the activity tiers; the factors come from the engine. */
+const ACTIVITY_LABEL: Record<ActivityLevel, string> = {
+  sedentary: 'sedentary',
+  light: 'lightly active',
+  moderate: 'moderately active',
+  active: 'active',
+  very_active: 'very active',
 };
+
+/** The factor shown in the chain must be the one the engine multiplied by. */
+function activityFor(level: ActivityLevel): { factor: number; label: string } {
+  return {
+    factor: ACTIVITY_FACTORS[level] ?? ACTIVITY_FACTORS.sedentary,
+    label: ACTIVITY_LABEL[level] ?? ACTIVITY_LABEL.sedentary,
+  };
+}
 
 const GOAL_LABEL: Record<Goal, string> = {
   lose_fat: 'Lose fat',
@@ -309,7 +318,7 @@ export function PlanView({ patient, plan }: PlanViewProps) {
             <span>page 2</span>
           </div>
 
-          <ExerciseSection plan={plan} />
+          <ExerciseSection plan={plan} goal={patient.goal} />
           <AtAGlance plan={plan} />
 
           {/* ---------------- beyond the numbers ---------------- */}
@@ -391,7 +400,7 @@ function NutritionSection({
   plan: PlanResult;
   ffm: number | null;
 }) {
-  const activity = ACTIVITY[patient.activityLevel] ?? ACTIVITY.moderate;
+  const activity = activityFor(patient.activityLevel);
   const tier = TIER_COPY[plan.rmr.source] ?? TIER_COPY.population;
   const macros = plan.macros;
   const flags = Array.isArray(macros.flags) ? macros.flags : [];
@@ -579,11 +588,15 @@ function TargetSide({ goal, plan }: { goal: Goal; plan: PlanResult }) {
     );
   }
 
+  // Deficits read from the smaller cut to the larger one (−15% to −25%);
+  // surpluses read the other way (+10% to +20%).
+  const [pctFirst, pctSecond] = lo > tdee ? [lo, hi] : [hi, lo];
+
   return (
     <>
       {GOAL_RANGE_NAME[goal] ?? 'Goal range'} is{' '}
       <b>
-        {signedPct(hi, tdee)} to {signedPct(lo, tdee)}
+        {signedPct(pctFirst, tdee)} to {signedPct(pctSecond, tdee)}
       </b>{' '}
       of daily energy use ({fmt(lo)}–{fmt(hi)} kcal). Your provider selected{' '}
       <b>{signedPct(selected, tdee)}</b>, which lands at {fmt(selected)} kcal
@@ -768,8 +781,8 @@ function EaUnavailable() {
       <div className="clamp-tag">Energy-availability check unavailable</div>
       <p>
         No body-composition data is on file, so the energy-availability floor could not be checked.
-        These targets use population estimates — interpret them conservatively, and add a scan
-        before pushing the deficit further.
+        These targets use population estimates — interpret them conservatively, and add a
+        body-composition scan before making the numbers more aggressive.
       </p>
     </div>
   );
@@ -1052,10 +1065,7 @@ function FoodSection({ plan }: { plan: PlanResult }) {
       </p>
 
       <div className="sub">What {fmt(proteinG)} g of protein looks like in a day</div>
-      <div
-        className="portions"
-        style={{ gridTemplateColumns: `repeat(${Math.min(5, Math.max(1, tiles.length))}, 1fr)` }}
-      >
+      <div className="portions">
         {tiles.map((tile) => (
           <div className="portion" key={tile.key}>
             <div className="glyph">
@@ -1096,7 +1106,7 @@ function FoodSection({ plan }: { plan: PlanResult }) {
               {remainder} g without any effort.{' '}
             </>
           ) : null}
-          You do not need all five of these on the same day; swap freely between them.
+          You do not need all of these on the same day; swap freely between them.
         </span>
       </div>
 
@@ -1157,7 +1167,15 @@ function splitActivity(activity: string): { main: string; detail: string | null 
   return { main: text, detail: null };
 }
 
-function ExerciseSection({ plan }: { plan: PlanResult }) {
+const RESISTANCE_WHY: Record<Goal, string> = {
+  lose_fat: 'This is the work that protects lean mass while calories are restricted.',
+  gain_muscle: 'This is the stimulus new muscle is built from — progress load or reps over time.',
+  maintain: 'This is what keeps the lean mass and strength you already have.',
+  improve_a1c:
+    'Muscle is where glucose goes after a meal — this is the work that makes that happen.',
+};
+
+function ExerciseSection({ plan, goal }: { plan: PlanResult; goal: Goal }) {
   const rx = plan.exercise;
   const ramp: RampWeek[] = Array.isArray(rx.rampWeeks)
     ? rx.rampWeeks.filter((w) => w && isNum(w.cardioMinutes))
@@ -1180,8 +1198,10 @@ function ExerciseSection({ plan }: { plan: PlanResult }) {
       </div>
       <p className="sec-lead">
         The training builds from where you are now — not from where we want to end up.{' '}
-        {fmt(rx.resistanceDaysPerWeek)} resistance sessions a week, with cardio volume ramped over{' '}
-        {ramp.length || 4} weeks.
+        {fmt(rx.resistanceDaysPerWeek)} resistance sessions a week
+        {first !== last
+          ? `, with cardio volume ramped over ${ramp.length || 4} weeks.`
+          : `, with cardio held at ${fmt(rx.cardioMinutesPerWeek)} minutes a week.`}
       </p>
 
       <div className="rx">
@@ -1192,7 +1212,7 @@ function ExerciseSection({ plan }: { plan: PlanResult }) {
             <span>&times; per week</span>
           </div>
           <div className="rx-t">
-            This is the work that protects lean mass while calories are restricted.
+            {RESISTANCE_WHY[goal] ?? RESISTANCE_WHY.maintain}
             {liftDays > 0 ? ` Laid out on ${liftDays} days in the split below.` : ''}
           </div>
         </div>
@@ -1209,15 +1229,21 @@ function ExerciseSection({ plan }: { plan: PlanResult }) {
             <span>min / week</span>
           </div>
           <div className="rx-t">
-            Built up over {ramp.length || 4} weeks. Brisk walking counts; you should be able to
-            talk but not sing.
+            {first !== last
+              ? `Built up over ${ramp.length || 4} weeks. `
+              : 'Steady at your current volume for now. '}
+            Brisk walking counts; you should be able to talk but not sing.
           </div>
         </div>
       </div>
 
       {ramp.length > 0 ? (
         <>
-          <div className="sub">{ramp.length}-week ramp — start where you are</div>
+          <div className="sub">
+            {first !== last
+              ? `${ramp.length}-week ramp — start where you are`
+              : 'Weekly cardio volume — steady for now'}
+          </div>
           <div
             className="ramp"
             style={{ gridTemplateColumns: `repeat(${Math.max(1, ramp.length)}, 1fr)` }}
@@ -1254,10 +1280,7 @@ function ExerciseSection({ plan }: { plan: PlanResult }) {
           <div className="sub">
             Proposed weekly split{ramp.length ? ` — week ${ramp[ramp.length - 1].week} shown` : ''}
           </div>
-          <div
-            className="split"
-            style={{ gridTemplateColumns: `repeat(${Math.min(7, split.length)}, 1fr)` }}
-          >
+          <div className="split">
             {split.map((d, i) => {
               const { main, detail } = splitActivity(d.activity);
               return (

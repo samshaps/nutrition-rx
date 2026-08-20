@@ -21,60 +21,62 @@ import type { PlanResult } from '../engine/types';
 /* ------------------------------------------------------------------ *
  * 1. Fixture PlanResult — Maya Torres (seed-maya-torres-0001)
  * ------------------------------------------------------------------ *
- * Hand-worked from BUILD_PLAN.md §Engine rules:
+ * Hand-worked from BUILD_PLAN.md §Engine rules, and cross-checked against the
+ * shipped engine so the fallback can never render a number the engine would
+ * not produce:
  *   RMR   Katch-McArdle  370 + 21.6 x 50.9 kg FFM        = 1469 kcal
- *   EEE   4 x 60 min resistance, ~5 MET x 74.8 kg / 7 d  =  214 kcal/day
- *   TDEE  1469 x 1.375 (light) + 214                     = 2230 kcal
+ *   EEE   4 x 60 min resistance, MET-based, per day      =  214 kcal/day
+ *   TDEE  1469 x 1.375 (light) + 214                     = 2234 kcal
  *   Goal  lose_fat, -15%..-25% of TDEE                   = 1900 .. 1680
  *   Floor EA 30 kcal/kg FFM -> 30 x 50.9 + 214 = 1741    -> 1750 kcal
  *   EA    (1750 - 214) / 50.9                            = 30.2 (reduced)
- *   Macro protein 2.0 g/kg x 74.8 = 150 g; fat 0.8 g/kg = 60 g (31% kcal);
- *         carbs = (1750 - 600 - 540) / 4 = 153 g; fiber = 14 g/1000 kcal = 25 g
+ *   Macro protein 2.0 g/kg x 74.8 = 150 g; fat 0.6 g/kg = 45 g;
+ *         carbs = remainder = 186 g; fiber = 14 g/1000 kcal = 25 g
  */
 export const PLAN_FIXTURE: PlanResult = {
   rmr: { kcal: 1469, source: 'ffm' },
   eee: 214,
-  tdee: 2230,
+  tdee: 2234,
   target: {
     kcal: 1750,
     range: [1680, 1900],
     clamped: {
       clampedBy: 'ea_floor',
       originalTarget: 1680,
-      floorValue: 1750,
+      floorValue: 1741,
     },
   },
   macros: {
     proteinG: 150,
-    carbsG: 153,
-    fatG: 60,
+    carbsG: 186,
+    fatG: 45,
     fiberG: 25,
     proteinPerKg: 2.0,
-    flags: [],
+    flags: ['protein_dosed_by_training_volume'],
   },
   ea: { value: 30.2, band: 'reduced' },
   exercise: {
     resistanceDaysPerWeek: 4,
-    cardioMinutesPerWeek: 210,
+    cardioMinutesPerWeek: 200,
     rampWeeks: [
-      { week: 1, cardioMinutes: 90 },
-      { week: 2, cardioMinutes: 130 },
-      { week: 3, cardioMinutes: 170 },
-      { week: 4, cardioMinutes: 210 },
+      { week: 1, cardioMinutes: 60 },
+      { week: 2, cardioMinutes: 105 },
+      { week: 3, cardioMinutes: 155 },
+      { week: 4, cardioMinutes: 200 },
     ],
     split: [
-      { day: 'Mon', activity: 'Lift' },
-      { day: 'Tue', activity: 'Brisk walk 30 min' },
-      { day: 'Wed', activity: 'Lift' },
-      { day: 'Thu', activity: 'Brisk walk 30 min' },
-      { day: 'Fri', activity: 'Lift' },
-      { day: 'Sat', activity: 'Lift + walk 30 min' },
-      { day: 'Sun', activity: 'Rest' },
+      { day: 'Mon', activity: 'Resistance training + 50 min moderate cardio' },
+      { day: 'Tue', activity: 'Resistance training + 50 min moderate cardio' },
+      { day: 'Wed', activity: '50 min moderate cardio' },
+      { day: 'Thu', activity: 'Resistance training' },
+      { day: 'Fri', activity: 'Resistance training' },
+      { day: 'Sat', activity: '50 min moderate cardio' },
+      { day: 'Sun', activity: 'Rest / light movement' },
     ],
     notes: [
-      'Keep the lifting program you are already doing — it is what protects lean mass during a deficit.',
-      'Move days around to fit your week, but leave at least one day between hard sessions for the same muscles.',
-      'Brisk walking counts as moderate cardio: you should be able to talk, but not sing.',
+      'Cardio ramps from 60 min/week in week 1 to 200 min/week by week 4. Repeat a week instead of advancing if the last step felt hard.',
+      'Resistance training 4 days/week, full-body or upper/lower. This is what protects lean mass while calories are reduced.',
+      'Expected rate of change: 0.5-1.0% of body weight per week. Faster than that is mostly lean mass and water.',
     ],
   },
 };

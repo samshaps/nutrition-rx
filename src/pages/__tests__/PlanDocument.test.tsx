@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import PlanDocument, { PlanView, toEngineInput } from '../PlanDocument';
 import { PLAN_FIXTURE, buildPortionTiles } from '../planFixture';
+import { buildFoodGuidance, generatePlan } from '../../engine';
 import { clearAll, ensureSeeds } from '../../store/patients';
 import { SEED_PATIENTS } from '../../store/seeds';
 import type { Patient, PlanResult } from '../../engine/types';
@@ -48,7 +49,7 @@ describe('PlanView — derivation and targets', () => {
     expect(text).toContain('1,469');
     expect(text).toContain('1.375');
     expect(text).toContain('214');
-    expect(text).toContain('2,230');
+    expect(text).toContain('2,234');
     expect(text).toContain('Katch-McArdle · from measured FFM');
     expect(container.querySelector('.tier--on')?.textContent).toContain('body-comp estimate');
   });
@@ -95,7 +96,20 @@ describe('PlanView — derivation and targets', () => {
     expect(protein?.textContent).toContain('150');
     expect(protein?.textContent).toContain('2.0 g per kg body weight');
     expect(protein?.textContent).toContain('dosed to your training volume');
-    expect(container.querySelector('.flagchip')?.textContent).toContain('Protein capped at 0.8');
+    const chip = container.querySelector('.flagchip');
+    expect(chip?.textContent).toContain('Protein capped at 0.8');
+    expect(chip?.className).toContain('flagchip--warn');
+  });
+
+  it('renders informational macro flags as neutral chips', () => {
+    const informational: PlanResult = {
+      ...PLAN_FIXTURE,
+      macros: { ...PLAN_FIXTURE.macros, flags: ['protein_dosed_by_training_volume'] },
+    };
+    const { container } = renderPlan(MAYA, informational);
+    const chip = container.querySelector('.flagchip');
+    expect(chip?.textContent).toBe('Protein dosed to weekly training volume');
+    expect(chip?.className).not.toContain('flagchip--warn');
   });
 
   it('draws current-vs-target gap bars from the 24-hour recall', () => {
@@ -116,19 +130,26 @@ describe('PlanView — derivation and targets', () => {
 });
 
 describe('PlanView — food guidance', () => {
-  it('scales the portion tiles to the protein target with plain running totals', () => {
+  it('renders the engine portion equivalents with plain running totals', () => {
     const { container } = renderPlan(MAYA);
+    const guidance = buildFoodGuidance(PLAN_FIXTURE.macros.proteinG);
     const tiles = container.querySelectorAll('.portion');
-    expect(tiles).toHaveLength(5);
+    expect(tiles).toHaveLength(guidance.items.length);
     expect(sheetText(container)).toContain('What 150 g of protein looks like in a day');
+    expect(tiles[0].textContent).toContain(guidance.items[0].label);
+    expect(tiles[0].textContent).toContain(guidance.items[0].portion);
     expect(container.querySelector('.portion-run')?.textContent).toMatch(/^\d+ g so far$/);
     expect(sheetText(container)).not.toContain('running 5');
+    // Non-protein guidance lines come from the engine too.
+    expect(sheetText(container)).toContain(guidance.carbGuidance);
+    expect(sheetText(container)).toContain(guidance.fiberGuidance);
   });
 
-  it('scales portions up for a bigger protein target', () => {
+  it('keeps a local portion library as the fallback when the engine cannot help', () => {
     const small = buildPortionTiles(150);
     const big = buildPortionTiles(220);
     const total = (t: ReturnType<typeof buildPortionTiles>) => t[t.length - 1].running;
+    expect(small).toHaveLength(5);
     expect(total(big)).toBeGreaterThan(total(small));
     expect(big[0].portion).toBe('9 oz, cooked');
   });
@@ -139,14 +160,16 @@ describe('PlanView — exercise and summary', () => {
     const { container } = renderPlan(MAYA);
     const text = sheetText(container);
     expect(container.querySelectorAll('.wk')).toHaveLength(4);
-    expect(text).toContain('90');
-    expect(text).toContain('210');
+    expect(text).toContain('60');
+    expect(text).toContain('200');
     const days = container.querySelectorAll('.day');
     expect(days).toHaveLength(7);
     expect(days[0].className).toContain('day--lift');
     expect(days[6].className).toContain('day--rest');
-    expect(days[1].textContent).toContain('Brisk walk');
-    expect(days[1].querySelector('em')?.textContent).toBe('30 min');
+    expect(days[0].textContent).toContain('Resistance training');
+    expect(days[0].querySelector('em')?.textContent).toBe('50 min moderate cardio');
+    // A cardio-only day has no separate label, so it renders without a sub-line.
+    expect(days[2].querySelector('em')).toBeNull();
     expect(container.querySelectorAll('.notes li')).toHaveLength(3);
   });
 
@@ -159,7 +182,35 @@ describe('PlanView — exercise and summary', () => {
     expect(tiles[1].textContent).toContain('1,750');
     expect(tiles[2].textContent).toContain('150');
     expect(tiles[3].textContent).toContain('4× lifting');
-    expect(tiles[3].textContent).toContain('build to 210 min cardio/wk');
+    expect(tiles[3].textContent).toContain('build to 200 min cardio/wk');
+  });
+
+  it('closes with the beyond-the-numbers note above the disclaimer', () => {
+    const { container } = renderPlan(MAYA);
+    const beyond = container.querySelector('.beyond');
+    expect(beyond?.textContent).toContain('Beyond the numbers');
+    expect(beyond?.textContent).toContain('Stress, mental health, medical history');
+    expect(beyond?.textContent).toContain('sleep');
+    // Order: at a glance -> beyond -> colophon.
+    const blocks = Array.from(container.querySelectorAll('.glance, .beyond, .colophon')).map(
+      (el) => el.className,
+    );
+    expect(blocks).toEqual(['glance', 'beyond', 'colophon']);
+  });
+
+  it('parses split activities into a label and a duration sub-line', () => {
+    const withCombo: PlanResult = {
+      ...PLAN_FIXTURE,
+      exercise: {
+        ...PLAN_FIXTURE.exercise,
+        split: [{ day: 'Mon', activity: 'Resistance training + 50 min moderate cardio' }],
+      },
+    };
+    const { container } = renderPlan(MAYA, withCombo);
+    const day = container.querySelector('.day');
+    expect(day?.className).toContain('day--lift');
+    expect(day?.querySelector('.day-a')?.firstChild?.textContent).toBe('Resistance training');
+    expect(day?.querySelector('em')?.textContent).toBe('50 min moderate cardio');
   });
 
   it('says Not assessed in the summary when EA is unavailable', () => {
@@ -185,11 +236,20 @@ describe('PlanDocument route', () => {
     );
   }
 
-  it('renders a plan for a known patient (engine result or fixture)', () => {
+  it('renders a plan for a known patient from the live engine', () => {
     const { container } = renderAt('/patient/seed-maya-torres-0001/plan');
     expect(screen.getByRole('heading', { level: 1, name: 'Maya Torres' })).toBeInTheDocument();
-    expect(container.querySelector('.target-num')?.textContent).toMatch(/\d/);
     expect(container.querySelector('.crumbs')?.textContent).toContain('Patients');
+
+    // Numbers on the page must be the engine's, not the fixture's.
+    const live = generatePlan(toEngineInput(MAYA));
+    expect(container.querySelector('.target-num')?.textContent).toContain(
+      live.target.kcal.toLocaleString('en-US'),
+    );
+    expect(container.querySelector('.wk-v')?.textContent).toContain(
+      String(live.exercise.rampWeeks[0].cardioMinutes),
+    );
+    expect(container.querySelectorAll('.day')).toHaveLength(live.exercise.split.length);
   });
 
   it('redirects an unknown patient id to the roster', () => {

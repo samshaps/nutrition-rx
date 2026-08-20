@@ -78,7 +78,7 @@ UI accepts imperial (lb, ft/in) and metric; storage is metric.
   - target ≥ RMR
   - EA = (target − EEE) / FFM ≥ 30 kcal/kg FFM (only when FFM known; warning banner when unknown)
   - When clamped, `EngineResult` includes `{ clampedBy, originalTarget, floorValue }` and the plan shows the provider *why*, with numbers. This is the product's reason to exist — it gets its own visual treatment.
-- **Macros:** protein 1.6–2.2 g/kg (adjusted BW if BMI ≥ 30; capped at 0.8 g/kg + flag when `renal_disease`), fat ≥ 0.6 g/kg and ≥ 20% kcal, carbs = remainder, fiber = 14 g/1000 kcal.
+- **Macros:** protein dosed by weekly structured exercise minutes, per Randee's stated practice (2026-08-20 feedback: "0.8–2 g/kg; I usually do 1:1 unless they exercise a lot, then 1.5–2"): < 90 min/wk → 1.0 g/kg, 90–179 → 1.5, ≥ 180 → 2.0; adjusted BW if BMI ≥ 30; capped at 0.8 g/kg + flag when `renal_disease`. Fat ≥ 0.6 g/kg and ≥ 20% kcal, carbs = remainder, fiber = 14 g/1000 kcal. The plan renders the chosen g/kg as "dosed to your training volume" with the accepted 0.8–2.2 range, never as a universal constant.
 - **EA display:** value + band (≥45 optimal / 30–45 reduced / <30 low), with a one-line plain-language explanation.
 - **Exercise templates by goal** (fat loss / gain / A1c per PRD §Outputs, maintain ≈ general-health default), **ramped from current reported activity** — week-1 volume starts near the patient's baseline and progresses toward the target over ~4 weeks. A1c template encodes the ≤2-consecutive-rest-days spacing rule. `mobility_limitation` and `cardiac_condition` flags swap in lower-impact wording and add a "clear with physician" note.
 
@@ -102,6 +102,9 @@ UI accepts imperial (lb, ft/in) and metric; storage is metric.
 1. **Nutrition targets** — calories; protein first and largest; carbs/fat/fiber; RMR-source trust badge; EA value with band; clamp explanation box when applicable; current-vs-target gap bars when recall present.
 2. **Food guidance** — portion-anchored equivalents composed from a small food library (chicken, Greek yogurt, eggs, whey, rice, oats, olive oil, nuts, vegetables...), rendered with simple visual portion references (icons/emoji-scale, not photography).
 3. **Exercise prescription** — days/wk resistance + cardio, minutes/session, proposed weekly split grid, 4-week progression ramp from current baseline.
+4. **"At a glance" closing summary** (Randee's request, 2026-08-20): a compact boxed row ending the document with her four items — energy availability, calorie goal, protein goal, exercise recommendation.
+
+**Copy/provenance rules from Randee's mock review (2026-08-20):** food-guidance running totals say "72 g so far", not "running 72"; the EA meter carries a provenance footnote (30 kcal/kg FFM comes from RED-S / low-energy-availability research, strongest in athletes, used as a conservative default — thresholds are the provider's call; she is researching the evidence base herself). v1.1 candidate: provider-editable protein dose and EA threshold per patient.
 
 Print button → browser print-to-PDF; print CSS hides app chrome, fits two pages. Visible "prepared by a provider; not medical advice absent clinical judgment" disclaimer on screen and in print.
 
